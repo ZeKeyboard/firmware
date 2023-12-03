@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../device.h"
 
 namespace core

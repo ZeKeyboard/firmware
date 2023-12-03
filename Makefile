@@ -19,7 +19,7 @@ PRECOMPILE_HELPER = $(TEENSY_TOOLS)/teensy-tools/1.58.0/precompile_helper
 OBJCOPY = $(TEENSY_COMPILE)/arm-none-eabi-objcopy
 POST_COMPILE = $(TEENSY_TOOLS)/teensy-tools/1.58.0/teensy_post_compile
 PYTHON = python3
-GENERATE_LAYOUT = scripts/generate-layout.py
+GENERATE_LAYOUT = scripts/generate_layout.py
 
 KEYBOARD_LAYOUT_JSON = resources/keyboard-layout.json
 
@@ -61,7 +61,7 @@ SOURCES = $(wildcard *.cpp) $(wildcard core/*.cpp) $(wildcard core/**/*.cpp) $(w
 
 all: build/firmware.hex
 
-generated/layout.h: $(KEYBOARD_LAYOUT_JSON) $(GENERATE_LAYOUT)
+generated/hardware_layout.h: $(KEYBOARD_LAYOUT_JSON) $(GENERATE_LAYOUT)
 	mkdir -p $(@D)
 	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -o $@
 
@@ -86,7 +86,7 @@ build/libraries/%.o: %.cpp $(LIB_HEADERS) build/pch/Arduino.h.gch
 	mkdir -p $(@D)
 	$(CXX) $(CXX_FLAGS) $(CXX_14) $(INCLUDE_LIBS) -c $< -o $@
 
-build/%.o: %.cpp $(HEADERS) build/pch/Arduino.h.gch generated/layout.h
+build/%.o: %.cpp $(HEADERS) build/pch/Arduino.h.gch generated/hardware_layout.h
 	mkdir -p $(@D)
 	$(CXX) $(CXX_FLAGS) $(CXX_17) $(INCLUDE_LIBS) -c $< -o $@
 

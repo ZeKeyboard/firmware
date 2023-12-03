@@ -1,6 +1,6 @@
 KEYBOARD_LAYOUT_JSON = ../resources/keyboard-layout.json
 PYTHON = python3
-GENERATE_LAYOUT = ../scripts/generate-layout.py
+GENERATE_LAYOUT = ../scripts/generate_layout.py
 
 CXX = g++
 CXX_FLAGS = -c -O2 -g -Wall -Wextra -std=gnu++17
@@ -14,11 +14,11 @@ LINK_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 all: simulator
 
-../generated/layout.h: $(KEYBOARD_LAYOUT_JSON) $(GENERATE_LAYOUT)
+../generated/hardware_layout.h: $(KEYBOARD_LAYOUT_JSON) $(GENERATE_LAYOUT)
 	mkdir -p $(@D)
 	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -o $@
 
-obj/%.o: %.cpp $(HEADERS) ../generated/layout.h
+obj/%.o: %.cpp $(HEADERS) ../generated/hardware_layout.h
 	mkdir -p $(@D)
 	$(CXX) $(CXX_FLAGS) $< -o $@ $(INCLUDE_LIBS)
 
