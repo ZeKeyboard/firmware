@@ -13,6 +13,7 @@ namespace simulator
 struct Key
 {
     bool pressed;
+    bool hovered;
     const common::KeyDescription* description;
 };
 
@@ -20,6 +21,8 @@ class KeyboardState
 {
 public:
     KeyboardState();
+
+    void handle_input();
 
     void draw(sf::RenderWindow& window);
 

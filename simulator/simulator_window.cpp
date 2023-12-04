@@ -1,4 +1,5 @@
 #include "simulator_window.h"
+#include "Window/Mouse.hpp"
 
 namespace simulator
 {
@@ -21,6 +22,7 @@ void SimulatorWindow::update()
     }
 
     window.clear();
+    keyboard_state.handle_input();
     draw();
     window.display();
 }
