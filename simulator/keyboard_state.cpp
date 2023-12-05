@@ -34,29 +34,13 @@ void KeyboardState::handle_input()
         const auto key_width = key.description->width * (KEY_SIZE + KEY_PADDING);
         const auto key_height = key.description->height * (KEY_SIZE + KEY_PADDING);
 
-        if (mouse_x >= key_x && mouse_x <= key_x + key_width &&
-            mouse_y >= key_y && mouse_y <= key_y + key_height)
-        {
-            key.hovered = true;
-        }
+        key.hovered = mouse_x >= key_x && mouse_x <= key_x + key_width &&
+            mouse_y >= key_y && mouse_y <= key_y + key_height;
     }
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    for (auto& key : keys)
     {
-        for (auto& key : keys)
-        {
-            if (key.hovered)
-            {
-                key.pressed = true;
-            }
-        }
-    }
-    else
-    {
-        for (auto& key : keys)
-        {
-            key.pressed = false;
-        }
+        key.pressed = key.hovered && sf::Mouse::isButtonPressed(sf::Mouse::Left);
     }
 }
 

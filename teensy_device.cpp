@@ -1,6 +1,7 @@
 #include "teensy_device.h"
 #include <Arduino.h>
 
+
 void TeensyDevice::sleep_micros(const int micros)
 {
     delayMicroseconds(micros);
@@ -19,5 +20,10 @@ void TeensyDevice::gpio_setup(const uint8_t pin, const PinMode mode)
 void TeensyDevice::gpio_write(const uint8_t pin, const bool value)
 {
     digitalWrite(pin, value);
+}
+
+bool TeensyDevice::gpio_read(const uint8_t pin)
+{
+    return digitalRead(pin);
 }
 
