@@ -6,8 +6,8 @@ enum class PinMode
 {
     IN = 0,
     OUT = 1,
-    INP_PULLUP = 2,
-    INP_PULLDOWN = 3,
+    IN_PULLUP = 2,
+    IN_PULLDOWN = 3,
     OUT_OPENDRAIN = 4,
     IN_DISABLE = 5,
 };

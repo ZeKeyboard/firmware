@@ -9,6 +9,8 @@
 namespace simulator
 {
 
+const int SLEEP_MULTIPLIER = 100;
+
 class SimulatorDevice : public Device
 {
 public:
@@ -23,12 +25,14 @@ public:
 
     void set_pressed_row_and_col(const int row, const int col, const bool pressed);
 
+    // TODO access this in a thread-safe way
+    uint8_t last_read_col;
+    bool row_state[common::constants::NUM_ROWS];
+
 private:
     std::mutex mutex;
 
     bool input_state[common::constants::NUM_ROWS][common::constants::NUM_COLS];
-
-    bool col_state[common::constants::NUM_COLS];
 
     std::map<uint8_t, uint8_t> pin_to_col;
     std::map<uint8_t, uint8_t> pin_to_row;

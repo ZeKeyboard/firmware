@@ -12,7 +12,7 @@ class SimulatorWindow
 {
 
 public:
-    SimulatorWindow(Device& device);
+    SimulatorWindow(SimulatorDevice& device);
 
     void update();
 

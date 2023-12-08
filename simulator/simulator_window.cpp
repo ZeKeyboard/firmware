@@ -4,7 +4,8 @@
 namespace simulator
 {
 
-SimulatorWindow::SimulatorWindow(Device& device) : device{device}
+SimulatorWindow::SimulatorWindow(SimulatorDevice& device)
+    : device{device}, keyboard_state{device}
 {
     window.create(sf::VideoMode(1920, 1080), "Simulator");
 }
@@ -22,7 +23,7 @@ void SimulatorWindow::update()
     }
 
     window.clear();
-    keyboard_state.handle_input();
+    keyboard_state.handle_input(window);
     draw();
     window.display();
 }
