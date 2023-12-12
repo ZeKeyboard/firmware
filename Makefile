@@ -28,7 +28,7 @@ PRECOMPILE_FLAGS = -x c++-header -O2 -g -Wall -ffunction-sections -fdata-section
 LINK_FLAGS = -O2 -Wl,--gc-sections,--relax -T$(TEENSY_HARDWARE)/avr/1.58.1/cores/teensy4/imxrt1062_t41.ld -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16
 
 CXX_14 = -std=gnu++14
-CXX_17 = -std=gnu++17
+CORE_CXX_VERSION = -std=gnu++23
 
 CXX_FLAGS = -c -O2 -g -Wall -Wextra -ffunction-sections -fdata-sections -nostdlib -MMD -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=158 -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
 
@@ -88,7 +88,7 @@ build/libraries/%.o: %.cpp $(LIB_HEADERS) build/pch/Arduino.h.gch
 
 build/%.o: %.cpp $(HEADERS) build/pch/Arduino.h.gch generated/hardware_layout.h
 	mkdir -p $(@D)
-	$(CXX) $(CXX_FLAGS) $(CXX_17) $(INCLUDE_LIBS) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CORE_CXX_VERSION) $(INCLUDE_LIBS) -c $< -o $@
 
 TARGETS = $(patsubst %.cpp,build/%.o,$(SOURCES)) $(patsubst %.cpp,build/libraries/%.o,$(LIB_SOURCES)) build/core/core.a
 

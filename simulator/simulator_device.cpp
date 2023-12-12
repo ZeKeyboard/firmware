@@ -88,4 +88,11 @@ void SimulatorDevice::set_pressed_row_and_col(const int row, const int col, cons
     input_state[row][col] = pressed;
 }
 
+void SimulatorDevice::set_keyboard_key1(const uint8_t) { }
+void SimulatorDevice::set_keyboard_key2(const uint8_t) { }
+void SimulatorDevice::set_keyboard_key3(const uint8_t) { }
+void SimulatorDevice::set_keyboard_key4(const uint8_t) { }
+void SimulatorDevice::set_keyboard_key5(const uint8_t) { }
+void SimulatorDevice::set_keyboard_key6(const uint8_t) { }
+
 }
