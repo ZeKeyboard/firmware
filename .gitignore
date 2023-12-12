@@ -5,3 +5,4 @@ simulator/core
 simulator/simulator
 
 generated/
+.gdb_history
