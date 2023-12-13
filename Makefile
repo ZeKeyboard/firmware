@@ -4,6 +4,9 @@ TEENSY_DIR = $(ARDUINO_PACKAGES)/teensy
 TEENSY_TOOLS = $(TEENSY_DIR)/tools
 TEENSY_HARDWARE = $(TEENSY_DIR)/hardware
 
+CATCH2_PATH = ${CATCH_DIR}
+CATCH2_INCLUDE = -I$(CATCH2_PATH)/extras
+
 LIBRARIES_VERSION = 1.58.1
 TEENSY_AVR = $(TEENSY_HARDWARE)/avr/$(LIBRARIES_VERSION)
 TEENSY_LIBS = $(TEENSY_AVR)/libraries
@@ -11,6 +14,9 @@ TEENSY4_CORE = $(TEENSY_AVR)/cores/teensy4
 
 TEENSY_COMPILE_VERSION = 11.3.1
 TEENSY_COMPILE = $(TEENSY_TOOLS)/teensy-compile/$(TEENSY_COMPILE_VERSION)/arm/bin
+
+TEST_CXX = g++
+TEST_CXX_FLAGS = -c -g -Wall -Wextra -std=gnu++23
 
 CXX = $(TEENSY_COMPILE)/arm-none-eabi-g++
 CC = $(TEENSY_COMPILE)/arm-none-eabi-gcc
@@ -48,7 +54,8 @@ OCTOWS2811_HEADERS = $(wildcard $(TEENSY_LIBS)/OctoWS2811/*.h)
 
 CORE_HEADERS = $(wildcard $(TEENSY4_CORE)/*.h)
 LIB_HEADERS = $(FASTLED_HEADERS) $(SPI_HEADERS) $(OCTOWS2811_HEADERS)
-HEADERS = $(wildcard *.h) $(wildcard core/*.h) $(wildcard core/**/*.h) $(wildcard common/*.h) $(wildcard common/**/*.h) $(wildcard generated/*.h)
+NON_HARDWARE_HEADERS = $(wildcard core/*.h) $(wildcard core/**/*.h) $(wildcard common/*.h) $(wildcard common/**/*.h) $(wildcard generated/*.h)
+HEADERS = $(wildcard *.h) $(NON_HARDWARE_HEADERS)
 
 FASTLED_SOURCES = $(wildcard $(TEENSY_LIBS)/FastLED/src/*.cpp)
 SPI_SOURCES = $(wildcard $(TEENSY_LIBS)/SPI/*.cpp)
@@ -57,7 +64,9 @@ OCTOWS2811_SOURCES = $(wildcard $(TEENSY_LIBS)/OctoWS2811/*.cpp)
 CORE_CPP_SOURCES = $(wildcard $(TEENSY4_CORE)/*.cpp)
 CORE_C_SOURCES = $(wildcard $(TEENSY4_CORE)/*.c)
 LIB_SOURCES = $(FASTLED_SOURCES) $(SPI_SOURCES) $(OCTOWS2811_SOURCES)
-SOURCES = $(wildcard *.cpp) $(wildcard core/*.cpp) $(wildcard core/**/*.cpp) $(wildcard common/*.cpp) $(wildcard common/**/*.cpp)
+NON_HARDWARE_SOURCES = $(wildcard core/*.cpp) $(wildcard core/**/*.cpp) $(wildcard common/*.cpp) $(wildcard common/**/*.cpp)
+TEST_SOURCES = $(NON_HARDWARE_SOURCES) $(wildcard core/test/*.cpp) $(wildcard core/**/test/*.cpp) $(CATCH2_PATH)/extras/catch_amalgamated.cpp
+SOURCES = $(wildcard *.cpp) $(NON_HARDWARE_SOURCES)
 
 all: build/firmware.hex
 
@@ -92,6 +101,8 @@ build/%.o: %.cpp $(HEADERS) build/pch/Arduino.h.gch generated/hardware_layout.h
 
 TARGETS = $(patsubst %.cpp,build/%.o,$(SOURCES)) $(patsubst %.cpp,build/libraries/%.o,$(LIB_SOURCES)) build/core/core.a
 
+TEST_TARGETS = $(patsubst %.cpp,build/test/%.o,$(TEST_SOURCES))
+
 build/firmware.elf: $(TARGETS)
 	@$(CC) $(LINK_FLAGS) -o $@ $(TARGETS) build/core/core.a -Lbuild/ -larm_cortexM7lfsp_math -lm -lstdc++
 
@@ -101,6 +112,17 @@ build/firmware.hex: build/firmware.elf
 upload: build/firmware.hex
 	teensy_loader_cli --mcu=TEENSY41 -w build/firmware.hex
 
+build/test/%.o: %.cpp $(NON_HARDWARE_HEADERS) generated/hardware_layout.h
+	mkdir -p $(@D)
+	$(TEST_CXX) $(TEST_CXX_FLAGS) $< -o $@ $(CATCH2_INCLUDE)
+
+test_main: $(TEST_TARGETS)
+	$(TEST_CXX) $(TEST_TARGETS) -o $@
+
+test: test_main
+	./test_main
+
 clean:
 	rm -rf build/
 	rm -rf generated/
+	rm -rf test_main
