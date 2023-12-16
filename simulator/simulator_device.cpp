@@ -50,22 +50,22 @@ void SimulatorDevice::gpio_setup(const uint8_t pin, const PinMode mode)
     std::cout << "SimulatorDevice::gpio_setup(" << (int)pin << ", " << (int)mode << ")" << std::endl;
 }
 
-void SimulatorDevice::gpio_write(const uint8_t pin, const bool value)
+void SimulatorDevice::gpio_write(const uint8_t pin, const PinState value)
 {
     std::lock_guard<std::mutex> lock(mutex);
-    std::cout << "SimulatorDevice::gpio_write(" << (int)pin << ", " << value << ")" << std::endl;
+    std::cout << "SimulatorDevice::gpio_write(" << (int)pin << ", " << (int)value << ")" << std::endl;
     if (pin_to_row.count(pin))
     {
-        row_state[pin_to_row[pin]] = value;
+        row_state[pin_to_row[pin]] = (bool)value;
     }
 }
 
-bool SimulatorDevice::gpio_read(const uint8_t pin)
+PinState SimulatorDevice::gpio_read(const uint8_t pin)
 {
     std::lock_guard<std::mutex> lock(mutex);
     if (pin_to_col.count(pin) == 0)
     {
-        return true;
+        return PinState::LEVEL_HIGH;
     }
     last_read_col = pin_to_col[pin];
 
@@ -75,11 +75,11 @@ bool SimulatorDevice::gpio_read(const uint8_t pin)
         {
             if (input_state[row][col] && !row_state[row])
             {
-                return false;
+                return PinState::LEVEL_LOW;
             }
         }
     }
-    return true;
+    return PinState::LEVEL_HIGH;
 }
 
 void SimulatorDevice::set_pressed_row_and_col(const int row, const int col, const bool pressed)

@@ -8,8 +8,8 @@ public:
     virtual void sleep_millis(const int millis) override;
     virtual void sleep_micros(const int micros) override;
     virtual void gpio_setup(const uint8_t pin, const PinMode mode) override;
-    virtual void gpio_write(const uint8_t pin, const bool value) override;
-    virtual bool gpio_read(const uint8_t pin) override;
+    virtual void gpio_write(const uint8_t pin, const PinState value) override;
+    virtual PinState gpio_read(const uint8_t pin) override;
 
     virtual void set_keyboard_key1(const uint8_t code) override;
     virtual void set_keyboard_key2(const uint8_t code) override;

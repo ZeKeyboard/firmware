@@ -12,14 +12,20 @@ enum class PinMode
     IN_DISABLE = 5,
 };
 
+enum class PinState
+{
+    LEVEL_LOW = 0,
+    LEVEL_HIGH = 1,
+};
+
 class Device
 {
 public:
     virtual void sleep_millis(const int millis) = 0;
     virtual void sleep_micros(const int micros) = 0;
     virtual void gpio_setup(const uint8_t pin, const PinMode mode) = 0;
-    virtual void gpio_write(const uint8_t pin, const bool value) = 0;
-    virtual bool gpio_read(const uint8_t pin) = 0;
+    virtual void gpio_write(const uint8_t pin, const PinState value) = 0;
+    virtual PinState gpio_read(const uint8_t pin) = 0;
 
     virtual void set_keyboard_key1(const uint8_t code) = 0;
     virtual void set_keyboard_key2(const uint8_t code) = 0;

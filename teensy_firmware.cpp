@@ -6,10 +6,7 @@ TeensyDevice device;
 core::Firmware firmware{device};
 
 void setup()
-{
-    device.serial_begin(9600);
-    firmware.init();
-}
+{ }
 
 void loop()
 {

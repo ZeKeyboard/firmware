@@ -15,8 +15,6 @@ void window_thread(simulator::SimulatorWindow& window)
 
 void firmware_thread(core::Firmware& firmware)
 {
-    firmware.init();
-
     while (true)
     {
         firmware.update();

@@ -5,6 +5,8 @@
 namespace common::constants
 {
 
+const int MAX_JUST_PRESSED_KEYS = 6;
+
 const uint8_t COL_PINS[] =
 {
     35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 12, 11, 10, 9, 8, 7, 6

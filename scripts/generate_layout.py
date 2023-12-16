@@ -3,7 +3,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 
 SKELETON = """#pragma once
@@ -18,8 +18,14 @@ const int TOTAL_NUM_KEYS = {total_num_keys};
 const int NUM_ROWS = {num_rows};
 const int NUM_COLS = {num_cols};
 
-const KeyDescription KEY_PROPERTIES[constants::TOTAL_NUM_KEYS] = {{
+constexpr KeyDescription KEY_PROPERTIES[constants::TOTAL_NUM_KEYS] =
+{{
     {rows}
+}};
+
+constexpr KeyDescription const* KEY_PROPERTIES_BY_ROW_COL[constants::NUM_ROWS][constants::NUM_COLS] =
+{{
+    {rows_and_cols}
 }};
 
 }}
@@ -114,16 +120,42 @@ def parse_json_layout(json_layout) -> Tuple[List[List[KeyDescription]], int]:
     return rows, max_col
 
 
+def get_row_col_grid(rows: List[List[KeyDescription]], max_col: int) -> List[List[Optional[int]]]:
+    grid = [[None] * (max_col + 1) for _ in range(len(rows))]
+    index = 0
+    for row in rows:
+        for key in row:
+            grid[key.row][key.col] = index
+            index += 1
+    return grid
+
+
 def write_cpp(rows: List[List[KeyDescription]], max_col: int, output_path: str):
     num_rows = len(rows)
     num_cols = max_col + 1
     total_num_keys = sum([len(row) for row in rows])
+
     rows_str = ",\n    ".join([",\n    ".join(
         [key.to_cpp() for key in row]) for row in rows])
+
+    grid = get_row_col_grid(rows, max_col)
+    grid_rows = []
+    for row_index, row in enumerate(grid):
+        grid_cols = []
+        for index in row:
+            if index is None:
+                grid_cols.append("nullptr")
+            else:
+                grid_cols.append(f"&KEY_PROPERTIES[{index}]")
+        row = ",\n        ".join(grid_cols)
+        grid_rows.append(f"{{\n        // Row {row_index}\n        {row}\n    }}")
+    rows_and_cols = ",\n    ".join(grid_rows)
+
     cpp = SKELETON.format(
         total_num_keys=total_num_keys,
         rows=rows_str,
         num_rows=num_rows,
+        rows_and_cols=rows_and_cols,
         num_cols=num_cols)
     with open(output_path, "w") as f:
         f.write(cpp)
