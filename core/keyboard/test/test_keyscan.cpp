@@ -71,6 +71,10 @@ TEST_CASE("Test KeyboardScanResult", "[KeyboardScanResult]")
         {
             result.try_add_pressed_key(&test_keys[i]);
         }
+
+        // just_pressed is full, this should not do anything
+        result.try_add_pressed_key(&test_keys[0]);
+
         result.update();
         REQUIRE(result.num_just_pressed == common::constants::MAX_JUST_PRESSED_KEYS);
         REQUIRE(result.num_pressed == common::constants::MAX_JUST_PRESSED_KEYS);

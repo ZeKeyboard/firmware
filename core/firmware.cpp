@@ -13,6 +13,8 @@ Firmware::Firmware(Device& device) : device{device}, key_scanner{device}
 
 void Firmware::update()
 {
+    keyboard::KeyboardScanResult result;
+    key_scanner.scan(result);
 }
 
 }

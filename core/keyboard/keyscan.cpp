@@ -86,6 +86,7 @@ void KeyScanner::scan(KeyboardScanResult& result)
                 }
             }
         }
+        device.gpio_write(row_pin, PinState::LEVEL_HIGH);
     }
     result.update();
 }
