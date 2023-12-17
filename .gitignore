@@ -7,3 +7,4 @@ simulator/simulator
 generated/
 .gdb_history
 test_main
+__pycache__/
