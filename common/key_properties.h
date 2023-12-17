@@ -13,6 +13,7 @@ struct KeyDescription
     float y;
     float height;
     float width;
+    uint16_t default_key;
 };
 
 }
