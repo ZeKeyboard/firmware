@@ -28,13 +28,16 @@ TEST_CASE("Test queue push and pop", "[FixedSizeQueue]")
         CHECK(!queue.empty());
         CHECK(!queue.full());
 
-        auto el1 = queue.pop();
-        auto el2 = queue.pop();
-        auto el3 = queue.pop();
-
+        auto el1 = queue.front();
         REQUIRE(el1 == 1);
+        queue.pop();
+        auto el2 = queue.front();
         REQUIRE(el2 == 2);
+        queue.pop();
+        auto el3 = queue.front();
         REQUIRE(el3 == 4);
+        queue.pop();
+
     }
 
     SECTION("Test struct queue")
@@ -52,21 +55,23 @@ TEST_CASE("Test queue push and pop", "[FixedSizeQueue]")
         CHECK(!queue.empty());
         CHECK(!queue.full());
 
-        auto el1 = queue.pop();
-        auto el2 = queue.pop();
-        auto el3 = queue.pop();
-
+        auto el1 = queue.front();
         REQUIRE(el1.a == 1);
         REQUIRE(el1.b == 2);
         REQUIRE(el1.c == 3);
+        queue.pop();
 
+        auto el2 = queue.front();
         REQUIRE(el2.a == 4);
         REQUIRE(el2.b == 5);
         REQUIRE(el2.c == 6);
+        queue.pop();
 
+        auto el3 = queue.front();
         REQUIRE(el3.a == 7);
         REQUIRE(el3.b == 8);
         REQUIRE(el3.c == 9);
+        queue.pop();
     }
 }
 
@@ -90,8 +95,9 @@ TEST_CASE("Test queue bounds")
 
         for (int i = 0; i < 10; ++i)
         {
-            auto el = queue.pop();
+            auto el = queue.front();
             REQUIRE(el == i);
+            queue.pop();
         }
 
         CHECK(queue.empty());
@@ -113,10 +119,11 @@ TEST_CASE("Test queue bounds")
 
         for (int i = 0; i < 10; ++i)
         {
-            auto el = queue.pop();
+            auto el = queue.front();
             REQUIRE(el.a == i);
             REQUIRE(el.b == i);
             REQUIRE(el.c == i);
+            queue.pop();
         }
 
         CHECK(queue.empty());

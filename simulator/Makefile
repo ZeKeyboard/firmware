@@ -3,7 +3,7 @@ PYTHON = python3
 GENERATE_LAYOUT = ../scripts/generate_layout.py
 
 CXX = g++
-CXX_FLAGS = -c -O2 -g -Wall -Wextra -std=gnu++23
+CXX_FLAGS = -c -g -Wall -Wextra -std=gnu++23
 SOURCES = $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard ../core/*.cpp) $(wildcard ../core/**/*.cpp) $(wildcard ../common/*.cpp) $(wildcard ../common/**/*.cpp)
 HEADERS = $(wildcard *.h) $(wildcard **/*.h) $(wildcard ../core/*.h) $(wildcard ../core/**/*.h) $(wildcard ../generated/*.h) $(wildcard ../common/*.h) $(wildcard ../common/**/*.h)
 

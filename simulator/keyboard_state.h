@@ -5,7 +5,7 @@
 #include <map>
 
 #include "../common/key_properties.h"
-#include "../common/constants.h"
+#include "../core/keyboard/keymap.h"
 #include "simulator_device.h"
 
 
@@ -22,7 +22,7 @@ struct Key
 class KeyboardState
 {
 public:
-    KeyboardState(SimulatorDevice& device);
+    KeyboardState(SimulatorDevice& device, const core::keyboard::KeyMap& key_map, const sf::Font& font);
 
     void handle_input(sf::RenderWindow& window);
 
@@ -31,6 +31,8 @@ public:
 private:
     std::array<Key, common::constants::TOTAL_NUM_KEYS> keys;
     SimulatorDevice& device;
+    const sf::Font& font;
+    const core::keyboard::KeyMap& keymap;
 
     void draw_row_and_col_state(
         sf::RenderWindow& window,

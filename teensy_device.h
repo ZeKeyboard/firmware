@@ -17,6 +17,9 @@ public:
     virtual void set_keyboard_key4(const uint8_t code) override;
     virtual void set_keyboard_key5(const uint8_t code) override;
     virtual void set_keyboard_key6(const uint8_t code) override;
+    virtual void set_keyboard_modifier(const uint16_t modifier) override;
+    virtual void set_keyboard_media(const uint16_t media) override;
+    virtual void keyboard_send() override;
 
     virtual uint16_t get_keyboard_leds() override;
 

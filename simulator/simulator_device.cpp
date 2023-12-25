@@ -71,12 +71,9 @@ PinState SimulatorDevice::gpio_read(const uint8_t pin)
 
     for (int row = 0; row < common::constants::NUM_ROWS; row++)
     {
-        for (int col = 0; col < common::constants::NUM_COLS; col++)
+        if (input_state[row][last_read_col] && !row_state[row])
         {
-            if (input_state[row][col] && !row_state[row])
-            {
-                return PinState::LEVEL_LOW;
-            }
+            return PinState::LEVEL_LOW;
         }
     }
     return PinState::LEVEL_HIGH;
@@ -88,11 +85,15 @@ void SimulatorDevice::set_pressed_row_and_col(const int row, const int col, cons
     input_state[row][col] = pressed;
 }
 
+// TODO implement
 void SimulatorDevice::set_keyboard_key1(const uint8_t) { }
 void SimulatorDevice::set_keyboard_key2(const uint8_t) { }
 void SimulatorDevice::set_keyboard_key3(const uint8_t) { }
 void SimulatorDevice::set_keyboard_key4(const uint8_t) { }
 void SimulatorDevice::set_keyboard_key5(const uint8_t) { }
 void SimulatorDevice::set_keyboard_key6(const uint8_t) { }
+void SimulatorDevice::set_keyboard_modifier(const uint16_t) { }
+void SimulatorDevice::set_keyboard_media(const uint16_t) { }
+void SimulatorDevice::keyboard_send() { }
 
 }

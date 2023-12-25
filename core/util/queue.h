@@ -24,17 +24,25 @@ public:
         count++;
     }
 
-    T pop()
+    T& peek_at(int index)
+    {
+        return data[(head + index) % SIZE];
+    }
+
+    T& front()
+    {
+        return data[head];
+    }
+
+    void pop()
     {
         if (count == 0)
         {
-            return T();
+            return;
         }
 
-        T item = data[head];
         head = (head + 1) % SIZE;
         count--;
-        return item;
     }
 
     int size() const

@@ -25,8 +25,8 @@ void firmware_thread(core::Firmware& firmware)
 int main()
 {
     simulator::SimulatorDevice device;
-    simulator::SimulatorWindow window{device};
     core::Firmware firmware{device};
+    simulator::SimulatorWindow window{device, firmware};
 
     std::thread window_thread{::window_thread, std::ref(window)};
     std::thread firmware_thread{::firmware_thread, std::ref(firmware)};

@@ -138,3 +138,18 @@ void TeensyDevice::set_keyboard_key6(const uint8_t code)
 {
     Keyboard.set_key6(code);
 }
+
+void TeensyDevice::set_keyboard_modifier(const uint16_t modifier)
+{
+    Keyboard.set_modifier(modifier);
+}
+
+void TeensyDevice::set_keyboard_media(const uint16_t media)
+{
+    Keyboard.set_media(media);
+}
+
+void TeensyDevice::keyboard_send()
+{
+    Keyboard.send_now();
+}

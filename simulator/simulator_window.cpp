@@ -1,13 +1,20 @@
 #include "simulator_window.h"
-#include "Window/Mouse.hpp"
+#include "Graphics/Font.hpp"
+#include "Graphics/Text.hpp"
+#include "keycodes.h"
+#include <sstream>
 
 namespace simulator
 {
 
-SimulatorWindow::SimulatorWindow(SimulatorDevice& device)
-    : device{device}, keyboard_state{device}
+const int TEXT_X = 10;
+const int TEXT_Y = 900;
+
+SimulatorWindow::SimulatorWindow(SimulatorDevice& device, core::Firmware& firmware)
+    : device{device}, firmware{firmware}, keyboard_state{device, firmware.keymap, font}
 {
     window.create(sf::VideoMode(1920, 1080), "Simulator");
+    font.loadFromFile("../resources/arial.ttf");
 }
 
 void SimulatorWindow::update()
@@ -29,9 +36,52 @@ void SimulatorWindow::update()
 }
 
 
+void SimulatorWindow::draw_firmware()
+{
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(50);
+    text.setFillColor(sf::Color::White);
+
+    if (firmware.key_queue.empty())
+    {
+        text.setString("[]");
+    }
+    else
+    {
+        std::stringstream ss;
+        for (int i = 0; i < firmware.key_queue.size(); ++i)
+        {
+            const auto key_report = firmware.key_queue.peek_at(i);
+            ss << "[";
+            for (int i = 0; i < key_report.num_keys; ++i)
+            {
+                const auto key = key_report.keys[i];
+                if (KEY_CODES.contains(key))
+                {
+                    ss << KEY_CODES.at(key) << " ";
+                }
+                else
+                {
+                    ss << (int)key << " ";
+                }
+            }
+            ss << "] ";
+            ss << "Modifier: " << (int)key_report.modifier << " Media: " << (int)key_report.media;
+            ss << "\n";
+        }
+
+        text.setString(ss.str());
+    }
+    text.setPosition(TEXT_X, TEXT_Y);
+    window.draw(text);
+}
+
+
 void SimulatorWindow::draw()
 {
     keyboard_state.draw(window);
+    draw_firmware();
 }
 
 

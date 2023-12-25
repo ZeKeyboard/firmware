@@ -33,6 +33,12 @@ public:
     virtual void set_keyboard_key4(const uint8_t code) = 0;
     virtual void set_keyboard_key5(const uint8_t code) = 0;
     virtual void set_keyboard_key6(const uint8_t code) = 0;
+    virtual void set_keyboard_modifier(const uint16_t modifier) = 0;
+    virtual void set_keyboard_media(const uint16_t media) = 0;
+    virtual void keyboard_send() = 0;
+
+    // TODO may need more work
+    // virtual bool sd_read(const char* filename, char* buffer, const uint32_t buffer_size) = 0;
 
     virtual uint16_t get_keyboard_leds() = 0;
 

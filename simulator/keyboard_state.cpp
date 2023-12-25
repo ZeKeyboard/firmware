@@ -1,9 +1,9 @@
 #include "keyboard_state.h"
-#include "Graphics/PrimitiveType.hpp"
 #include "Graphics/RectangleShape.hpp"
-
 #include <Graphics/RenderWindow.hpp>
 #include <Window/Mouse.hpp>
+
+#include "keycodes.h"
 
 
 namespace simulator
@@ -15,7 +15,7 @@ const int KEY_PADDING = 40;
 const int OFFSET_X = 100;
 const int OFFSET_Y = 100;
 
-KeyboardState::KeyboardState(SimulatorDevice& device) : device{device}
+KeyboardState::KeyboardState(SimulatorDevice& device, const core::keyboard::KeyMap& key_map, const sf::Font& font) : device{device}, font{font}, keymap{key_map}
 {
     for (unsigned i = 0; i < common::constants::TOTAL_NUM_KEYS; ++i)
     {
@@ -49,6 +49,7 @@ void KeyboardState::handle_input(sf::RenderWindow& window)
     for (auto& key : keys)
     {
         key.pressed = key.hovered && sf::Mouse::isButtonPressed(sf::Mouse::Left);
+        device.set_pressed_row_and_col(key.description->row, key.description->col, key.pressed);
     }
 }
 
@@ -78,6 +79,26 @@ void KeyboardState::draw_row_and_col_state(
     if (should_visualize_col)
     {
         window.draw(col_rect);
+    }
+
+    const auto action = keymap.actions[row][col];
+    if (action != nullptr && action->is_single_key())
+    {
+        sf::Text text;
+        text.setFont(font);
+        text.setCharacterSize(20);
+        text.setFillColor(sf::Color::White);
+        const auto code = action->get_single_key();
+        if (KEY_CODES.contains(code))
+        {
+            text.setString(KEY_CODES.at(code));
+        }
+        else
+        {
+            text.setString(std::to_string(code));
+        }
+        text.setPosition(x + KEY_SIZE/4.0, y + KEY_SIZE/4.0);
+        window.draw(text);
     }
 }
 
