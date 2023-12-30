@@ -22,4 +22,6 @@ const uint8_t ROW_PINS[] =
     5, 4, 3, 2, 1, 0
 };
 
+const uint16_t CHECKSUM_PERIOD = 65500;
+
 }

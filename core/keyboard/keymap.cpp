@@ -7,14 +7,14 @@ namespace core::keyboard
 
 void KeyReport::add_key(uint16_t key)
 {
-    if (util::key_is_standard_key(key))
+    if (util::key_is_valid_standard_key(key))
     {
         if (num_keys < common::constants::MAX_KEYREPORT_KEYS)
         {
             keys[num_keys++] = key;
         }
     }
-    else if (util::key_is_modifier(key))
+    else if (util::key_is_valid_modifier(key))
     {
         modifier |= key;
     }
@@ -22,6 +22,60 @@ void KeyReport::add_key(uint16_t key)
     {
         media = key;
     }
+}
+
+
+bool KeyMap::check_checksum(uint16_t* data, int size)
+{
+    if (size < 2)
+    {
+        return false;
+    }
+    uint16_t checksum = 0;
+    for (int i = 2; i < size; i++)
+    {
+        checksum = (checksum + data[i]) % common::constants::CHECKSUM_PERIOD;
+    }
+    return checksum == data[1];
+}
+
+
+bool KeyMap::check_sequence_lengths(uint16_t* data, int size)
+{
+    if (size < 2)
+    {
+        return false;
+    }
+    int expected_num_keys = data[0];
+    int total_sequence_length = 0;
+    int total_number_of_keys = 0;
+    for (int i = 2; i < size;)
+    {
+        i += 2;
+
+        const uint16_t sequence_length = data[i++];
+        if (sequence_length == 0)
+        {
+            return false;
+        }
+        i += sequence_length * 3;
+        total_number_of_keys++;
+
+        total_sequence_length += sequence_length;
+    }
+
+    if (total_number_of_keys != expected_num_keys)
+    {
+        return false;
+    }
+
+    const int expected_size = 2 + total_number_of_keys * 3 + total_sequence_length * 3;
+
+    if (size != expected_size)
+    {
+        return false;
+    }
+    return true;
 }
 
 
@@ -47,8 +101,6 @@ void KeyMap::load_default()
 
 void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue) const
 {
-    // TODO: if it's a single key, it should be combined with the simultaneously pressed keys, but if it's a sequence, it should override the others
-
     // iterating backwards to prioritize the last pressed keys
     KeyReport report;
     for (int i = scan_result.num_pressed - 1; i >= 0; --i)
@@ -69,10 +121,67 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
     key_queue.push(report);
 }
 
-
-void KeyMap::load(uint8_t* data, int size)
+Action* KeyMap::get_action(int row, int col) const
 {
-    // TODO: implement
+    return actions[row][col];
+}
+
+bool KeyMap::load(uint16_t* data, int size)
+{
+    if (!check_checksum(data, size))
+    {
+        return false;
+    }
+
+    if (!check_sequence_lengths(data, size))
+    {
+        return false;
+    }
+
+    // initialize all actions to null
+    for (int i = 0; i < common::constants::NUM_ROWS; i++)
+    {
+        for (int j = 0; j < common::constants::NUM_COLS; j++)
+        {
+            actions[i][j] = nullptr;
+        }
+    }
+
+    for (int i = 2; i < size;)
+    {
+        const uint16_t row = data[i++];
+        const uint16_t col = data[i++];
+
+        const uint16_t sequence_length = data[i++];
+
+        KeyPress* sequence = new KeyPress[sequence_length];
+        for (int j = 0; j < sequence_length; ++j)
+        {
+            const uint16_t key = data[i++];
+            if (!util::key_is_valid_standard_key(key))
+            {
+                return false;
+            }
+
+            const uint16_t modifier = data[i++];
+            if (!util::key_is_valid_modifier(modifier))
+            {
+                return false;
+            }
+
+            const uint16_t media = data[i++];
+            if (!util::key_is_media(media))
+            {
+                return false;
+            }
+
+            sequence[j] = {key, modifier, media};
+        }
+        Action* action = new Action(sequence, sequence_length);
+        actions[row][col] = action;
+    }
+
+    return true;
 }
 
 }

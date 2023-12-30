@@ -32,13 +32,17 @@ public:
     void translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue) const;
 
     void load_default();
-    void load(uint8_t* data, int size);
+    bool load(uint16_t* data, int size);
+    Action* get_action(int row, int col) const;
 
+    // TODO remove these friends
     friend class simulator::SimulatorWindow;
     friend class simulator::KeyboardState;
 
 private:
     Action* actions[common::constants::NUM_ROWS][common::constants::NUM_COLS];
+    bool check_checksum(uint16_t* data, int size);
+    bool check_sequence_lengths(uint16_t* data, int size);
 };
 
 }
