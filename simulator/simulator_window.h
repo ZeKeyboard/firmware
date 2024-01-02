@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "../device.h"
 #include "Graphics/Font.hpp"
 #include "keyboard_state.h"
 #include "../core/firmware.h"
@@ -24,10 +23,11 @@ private:
     void draw();
 
     void draw_firmware();
+    void draw_sent_keys();
 
     sf::RenderWindow window;
     sf::Font font;
-    Device& device;
+    SimulatorDevice& device;
     core::Firmware& firmware;
     KeyboardState keyboard_state;
 };

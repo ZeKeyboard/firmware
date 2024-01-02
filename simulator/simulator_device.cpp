@@ -85,15 +85,48 @@ void SimulatorDevice::set_pressed_row_and_col(const int row, const int col, cons
     input_state[row][col] = pressed;
 }
 
-// TODO implement
-void SimulatorDevice::set_keyboard_key1(const uint8_t) { }
-void SimulatorDevice::set_keyboard_key2(const uint8_t) { }
-void SimulatorDevice::set_keyboard_key3(const uint8_t) { }
-void SimulatorDevice::set_keyboard_key4(const uint8_t) { }
-void SimulatorDevice::set_keyboard_key5(const uint8_t) { }
-void SimulatorDevice::set_keyboard_key6(const uint8_t) { }
-void SimulatorDevice::set_keyboard_modifier(const uint16_t) { }
-void SimulatorDevice::set_keyboard_media(const uint16_t) { }
+void SimulatorDevice::set_keyboard_key1(const uint8_t code)
+{
+    current_keys[0] = code;
+}
+void SimulatorDevice::set_keyboard_key2(const uint8_t code)
+{
+    current_keys[1] = code;
+}
+void SimulatorDevice::set_keyboard_key3(const uint8_t code)
+{
+    current_keys[2] = code;
+}
+void SimulatorDevice::set_keyboard_key4(const uint8_t code)
+{
+    current_keys[3] = code;
+}
+void SimulatorDevice::set_keyboard_key5(const uint8_t code)
+{
+    current_keys[4] = code;
+}
+void SimulatorDevice::set_keyboard_key6(const uint8_t code)
+{
+    current_keys[5] = code;
+}
+void SimulatorDevice::set_keyboard_modifier(const uint16_t modifier)
+{
+    this->current_modifier = modifier;
+}
+void SimulatorDevice::set_keyboard_media(const uint16_t media)
+{
+    this->current_media = media;
+}
 void SimulatorDevice::keyboard_send() { }
+
+void SimulatorDevice::start_timer()
+{
+    start_time = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+}
+
+uint32_t SimulatorDevice::get_timer_micros() const
+{
+    return (std::chrono::high_resolution_clock::now().time_since_epoch().count() - start_time) / 1000;
+}
 
 }

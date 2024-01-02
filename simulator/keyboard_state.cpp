@@ -81,14 +81,14 @@ void KeyboardState::draw_row_and_col_state(
         window.draw(col_rect);
     }
 
-    const auto action = keymap.actions[row][col];
+    const auto action = keymap.get_action(row, col);
     if (action != nullptr && action->is_single_key())
     {
         sf::Text text;
         text.setFont(font);
         text.setCharacterSize(20);
         text.setFillColor(sf::Color::White);
-        const auto code = action->get_single_key();
+        const auto code = action->sequence[0].key;
         if (KEY_CODES.contains(code))
         {
             text.setString(KEY_CODES.at(code));

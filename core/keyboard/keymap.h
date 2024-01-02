@@ -5,12 +5,6 @@
 #include "action.h"
 
 
-namespace simulator
-{
-class SimulatorWindow;
-class KeyboardState;
-}
-
 namespace core::keyboard
 {
 
@@ -34,10 +28,6 @@ public:
     void load_default();
     bool load(const uint16_t* data, int size);
     Action* get_action(int row, int col) const;
-
-    // TODO remove these friends
-    friend class simulator::SimulatorWindow;
-    friend class simulator::KeyboardState;
 
 private:
     Action* actions[common::constants::NUM_ROWS][common::constants::NUM_COLS];

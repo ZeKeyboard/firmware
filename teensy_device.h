@@ -40,4 +40,10 @@ public:
     virtual void serial_println(int8_t val) override;
     virtual void serial_println(int16_t val) override;
     virtual void serial_println(int32_t val) override;
+
+    virtual void start_timer() override;
+    virtual uint32_t get_timer_micros() const override;
+
+private:
+    uint32_t start_time;
 };

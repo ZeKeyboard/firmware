@@ -59,4 +59,36 @@ public:
     virtual void serial_println(int8_t val) = 0;
     virtual void serial_println(int16_t val) = 0;
     virtual void serial_println(int32_t val) = 0;
+
+    virtual void start_timer() = 0;
+    virtual uint32_t get_timer_micros() const = 0;
+
+    inline void set_keyboard_key_by_index(const uint8_t index, const uint8_t code)
+    {
+        // This is a bit of a hack, but it works.
+        if (index == 0)
+        {
+            set_keyboard_key1(code);
+        }
+        else if (index == 1)
+        {
+            set_keyboard_key2(code);
+        }
+        else if (index == 2)
+        {
+            set_keyboard_key3(code);
+        }
+        else if (index == 3)
+        {
+            set_keyboard_key4(code);
+        }
+        else if (index == 4)
+        {
+            set_keyboard_key5(code);
+        }
+        else if (index == 5)
+        {
+            set_keyboard_key6(code);
+        }
+    }
 };

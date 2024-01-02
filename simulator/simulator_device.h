@@ -58,10 +58,19 @@ public:
 
     void set_pressed_row_and_col(const int row, const int col, const bool pressed);
 
+    virtual void start_timer() override;
+    virtual uint32_t get_timer_micros() const override;
+
     uint8_t last_read_col;
     bool row_state[common::constants::NUM_ROWS];
 
+    uint8_t current_keys[common::constants::MAX_KEYREPORT_KEYS];
+    uint8_t current_modifier;
+    uint8_t current_media;
+
 private:
+    uint32_t start_time;
+
     uint16_t leds;
     std::mutex mutex;
 

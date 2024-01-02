@@ -7,8 +7,11 @@
 namespace simulator
 {
 
-const int TEXT_X = 10;
-const int TEXT_Y = 900;
+const int QUEUE_TEXT_POS_X = 10;
+const int QUEUE_TEXT_POS_Y = 900;
+
+const int SENT_KEYS_TEXT_POS_X = 500;
+const int SENT_KEYS_TEXT_POS_Y = 900;
 
 SimulatorWindow::SimulatorWindow(SimulatorDevice& device, core::Firmware& firmware)
     : device{device}, firmware{firmware}, keyboard_state{device, firmware.keymap, font}
@@ -73,7 +76,7 @@ void SimulatorWindow::draw_firmware()
 
         text.setString(ss.str());
     }
-    text.setPosition(TEXT_X, TEXT_Y);
+    text.setPosition(QUEUE_TEXT_POS_X, QUEUE_TEXT_POS_Y);
     window.draw(text);
 }
 
@@ -82,6 +85,34 @@ void SimulatorWindow::draw()
 {
     keyboard_state.draw(window);
     draw_firmware();
+    draw_sent_keys();
+}
+
+void SimulatorWindow::draw_sent_keys()
+{
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(50);
+    text.setFillColor(sf::Color::Magenta);
+    text.setPosition(SENT_KEYS_TEXT_POS_X, SENT_KEYS_TEXT_POS_Y);
+    std::stringstream ss;
+    ss << "Sent keys: ";
+    for (int i = 0; i < common::constants::MAX_KEYREPORT_KEYS; ++i)
+    {
+        const auto code = device.current_keys[i];
+        const auto full_code = 0xF000 | code;
+        if (KEY_CODES.contains(full_code))
+        {
+            ss << KEY_CODES.at(full_code) << " ";
+        }
+        else
+        {
+            ss << (int)code << " ";
+        }
+    }
+    ss << "\nModifier: " << (int)device.current_modifier << ", Media: " << (int)device.current_media;
+    text.setString(ss.str());
+    window.draw(text);
 }
 
 

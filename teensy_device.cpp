@@ -153,3 +153,13 @@ void TeensyDevice::keyboard_send()
 {
     Keyboard.send_now();
 }
+
+void TeensyDevice::start_timer()
+{
+    start_time = micros();
+}
+
+uint32_t TeensyDevice::get_timer_micros() const
+{
+    return micros() - start_time;
+}
