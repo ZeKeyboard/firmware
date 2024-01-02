@@ -301,17 +301,27 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
     const auto success = keymap.load(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
     REQUIRE(success);
 
-
     const common::KeyDescription descriptions[]
     {
         {0, 0, 0, 0, 1, 1, 0},  // 0
         {1, 3, 1, 3, 1, 1, 0},  // 1
         {2, 3, 2, 3, 1, 1, 0},  // 2
     };
-    core::keyboard::KeyQueue queue;
+
+    SECTION("Test nothing pressed")
+    {
+        core::keyboard::KeyQueue queue;
+        core::keyboard::KeyboardScanResult scan_result;
+        scan_result.num_pressed = 0;
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+
+        CHECK(queue.size() == 0);
+    }
 
     SECTION("Test single key")
     {
+        core::keyboard::KeyQueue queue;
         core::keyboard::KeyboardScanResult scan_result;
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[0];
@@ -322,6 +332,123 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
         CHECK(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (4 | 0xF000));
         CHECK(queue.front().modifier == 0xE000);
+        CHECK(queue.front().media == 0xE400);
+    }
+
+    SECTION("Test multiple keys pressed")
+    {
+        const uint16_t data[]
+        {
+            7,      // num keys
+            61144,  // checksum
+
+            0,  // row 0
+            0,  // col 0
+            1,                // sequence length
+            (4    | 0xF000),  // key A
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            0,  // row 0
+            1,  // col 1
+            1,                // sequence length
+            (5    | 0xF000),  // key B
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            0,  // row 0
+            2,  // col 2
+            1,                // sequence length
+            (6    | 0xF000),  // key C
+            (2    | 0xE000),  // shift
+            (0    | 0xE400),  // no media
+
+            0,  // row 0
+            3,  // col 3
+            1,                // sequence length
+            (7    | 0xF000),  // key D
+            (1    | 0xE000),  // ctrl
+            (0    | 0xE400),  // no media
+
+            0,  // row 0
+            4,  // col 4
+            1,                // sequence length
+            (8    | 0xF000),  // key E
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            0,  // row 0
+            5,  // col 5
+            1,                // sequence length
+            (9    | 0xF000),  // key F
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            0,  // row 0
+            6,  // col 6
+            1,                // sequence length
+            (10   | 0xF000),  // key G
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+        };
+
+        const common::KeyDescription descriptions[]
+        {
+            {0, 0, 0, 0, 1, 1, 0},  // 0
+            {0, 1, 1, 3, 1, 1, 0},  // 1
+            {0, 2, 2, 3, 1, 1, 0},  // 2
+            {0, 3, 2, 3, 1, 1, 0},  // 3
+            {0, 4, 2, 3, 1, 1, 0},  // 4
+            {0, 5, 2, 3, 1, 1, 0},  // 5
+            {0, 6, 2, 3, 1, 1, 0},  // 6
+        };
+
+        core::keyboard::KeyMap keymap;
+        const auto success = keymap.load(data, sizeof(data) / sizeof(data[0]));
+        REQUIRE(success);
+
+        core::keyboard::KeyQueue queue;
+        core::keyboard::KeyboardScanResult scan_result;
+        scan_result.num_pressed = 7;
+
+        for (int i = 0; i < 7; ++i)
+        {
+            scan_result.pressed[i] = &descriptions[i];
+        }
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+
+        CHECK(queue.size() == 1);
+        CHECK(queue.front().num_keys == 6);
+        CHECK(queue.front().keys[0] == (10 | 0xF000));
+        CHECK(queue.front().keys[1] == (9  | 0xF000));
+        CHECK(queue.front().keys[2] == (8  | 0xF000));
+        CHECK(queue.front().keys[3] == (7  | 0xF000));
+        CHECK(queue.front().keys[4] == (6  | 0xF000));
+        CHECK(queue.front().keys[5] == (5  | 0xF000));
+        CHECK(queue.front().modifier == (0x03 | 0xE000));
+        CHECK(queue.front().media == 0xE400);
+    }
+
+    SECTION("Test sequence")
+    {
+        core::keyboard::KeyQueue queue;
+        core::keyboard::KeyboardScanResult scan_result;
+        scan_result.num_pressed = 1;
+        scan_result.pressed[0] = &descriptions[1];
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+
+        CHECK(queue.size() == 2);
+        CHECK(queue.front().num_keys == 1);
+        CHECK(queue.front().keys[0] == (6 | 0xF000));
+        CHECK(queue.front().modifier == (0x01 | 0xE000));
+        CHECK(queue.front().media == 0xE400);
+        queue.pop();
+
+        CHECK(queue.front().num_keys == 1);
+        CHECK(queue.front().keys[0] == (25 | 0xF000));
+        CHECK(queue.front().modifier == (0x01 | 0xE000));
         CHECK(queue.front().media == 0xE400);
     }
 }

@@ -28,9 +28,9 @@ struct Action
     KeyPress* sequence;
     uint8_t sequence_length;
 
-    // TODO remove
     bool is_single_key() const;
 
+    // TODO remove
     uint16_t get_single_key() const;
 };
 

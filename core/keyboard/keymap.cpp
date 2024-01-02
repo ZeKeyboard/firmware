@@ -101,8 +101,18 @@ void KeyMap::load_default()
 
 void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue) const
 {
+    /*
+     * This function implements the following logic:
+     * For each key in the scan result:
+     * If the keys are single keys (not part of a sequence),
+     * they should all be sent together in a single report. This is because the user
+     * might be holding down several keys together.
+     * If the keys are part of a sequence, they should be sent in separate report, all queued up. This is because they need to be sent separately for the computer to intepret them as separate keypresses.
+     */
+
+    KeyReport single_key_report;
+    bool single_key_pressed = false;
     // iterating backwards to prioritize the last pressed keys
-    KeyReport report;
     for (int i = scan_result.num_pressed - 1; i >= 0; --i)
     {
 
@@ -113,18 +123,37 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
             if (action->is_single_key())
             {
                 const auto code = action->sequence[0].key;
-                report.add_key(code);
+                single_key_report.add_key(code);
 
                 const auto modifier = action->sequence[0].modifier;
-                report.add_key(modifier);
+                single_key_report.add_key(modifier);
 
                 const auto media = action->sequence[0].media;
-                report.add_key(media);
+                single_key_report.add_key(media);
+                single_key_pressed = true;
+            }
+            else
+            {
+                for (int j = 0; j < action->sequence_length; ++j)
+                {
+                    KeyReport report;
+                    const auto code = action->sequence[j].key;
+                    report.add_key(code);
+
+                    const auto modifier = action->sequence[j].modifier;
+                    report.add_key(modifier);
+
+                    const auto media = action->sequence[j].media;
+                    report.add_key(media);
+                    key_queue.push(report);
+                }
             }
         }
     }
-    // TODO do special handling for sequences
-    key_queue.push(report);
+    if (single_key_pressed)
+    {
+        key_queue.push(single_key_report);
+    }
 }
 
 Action* KeyMap::get_action(int row, int col) const
