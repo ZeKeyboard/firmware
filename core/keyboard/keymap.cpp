@@ -18,14 +18,14 @@ void KeyReport::add_key(uint16_t key)
     {
         modifier |= key;
     }
-    else if (util::key_is_media(key))
+    else if (util::key_is_media(key) && !util::key_is_blank(key))
     {
         media = key;
     }
 }
 
 
-bool KeyMap::check_checksum(uint16_t* data, int size)
+bool KeyMap::check_checksum(const uint16_t* data, int size) const
 {
     if (size < 2)
     {
@@ -40,7 +40,7 @@ bool KeyMap::check_checksum(uint16_t* data, int size)
 }
 
 
-bool KeyMap::check_sequence_lengths(uint16_t* data, int size)
+bool KeyMap::check_sequence_lengths(const uint16_t* data, int size) const
 {
     if (size < 2)
     {
@@ -112,8 +112,14 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
         {
             if (action->is_single_key())
             {
-                const auto code = action->get_single_key();
+                const auto code = action->sequence[0].key;
                 report.add_key(code);
+
+                const auto modifier = action->sequence[0].modifier;
+                report.add_key(modifier);
+
+                const auto media = action->sequence[0].media;
+                report.add_key(media);
             }
         }
     }
@@ -126,7 +132,7 @@ Action* KeyMap::get_action(int row, int col) const
     return actions[row][col];
 }
 
-bool KeyMap::load(uint16_t* data, int size)
+bool KeyMap::load(const uint16_t* data, int size)
 {
     if (!check_checksum(data, size))
     {
@@ -163,13 +169,13 @@ bool KeyMap::load(uint16_t* data, int size)
                 return false;
             }
 
-            const uint16_t modifier = data[i++];
+            uint16_t modifier = data[i++];
             if (!util::key_is_valid_modifier(modifier))
             {
                 return false;
             }
 
-            const uint16_t media = data[i++];
+            uint16_t media = data[i++];
             if (!util::key_is_media(media))
             {
                 return false;

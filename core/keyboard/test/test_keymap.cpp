@@ -2,57 +2,59 @@
 #include <catch_amalgamated.hpp>
 
 
+const uint16_t VALID_DATA[]
+{
+    3,      // num keys
+    22664,  // checksum
+
+    0,  // row 0
+    0,  // col 0
+    // action 1
+    1,                // sequence length
+    (4    | 0xF000),  // key A
+    (0    | 0xE000),  // no modifier
+    (0    | 0xE400),  // no media
+
+    1,  // row 1
+    3,  // col 3
+    // action 2
+    2,                // sequence length
+    (6    | 0xF000),  // key C
+    (0x01 | 0xE000),  // ctrl
+    (0    | 0xE400),  // no media
+    (25   | 0xF000),  // key V
+    (0x01 | 0xE000),  // ctrl
+    (0    | 0xE400),  // no media
+
+    2,  // row 2
+    3,  // col 3
+    // action 3
+    6,                // sequence length
+    (0    | 0xF000),  // no key
+    (0    | 0xE000),  // no modifier
+    (0xCD | 0xE400),  // Play / Pause
+    (14   | 0xF000),  // key K
+    (0    | 0xE000),  // no modifier
+    (0    | 0xE400),  // no media
+    (8    | 0xF000),  // key E
+    (0    | 0xE000),  // ctrl
+    (0    | 0xE400),  // no media
+    (5    | 0xF000),  // key B
+    (0    | 0xE000),  // ctrl
+    (0    | 0xE400),  // no media
+    (4    | 0xF000),  // key A
+    (0    | 0xE000),  // ctrl
+    (0    | 0xE400),  // no media
+    (5    | 0xF000),  // key B
+    (0    | 0xE000),  // ctrl
+    (0    | 0xE400),  // no media
+};
+
+
 TEST_CASE("Test keymap load", "[KeyMap]")
 {
-    uint16_t valid_data[]
-    {
-        3,      // num keys
-        22664,  // checksum
 
-        0,  // row 0
-        0,  // col 0
-        // action 1
-        1,                // sequence length
-        (4    | 0xF000),  // key A
-        (0    | 0xE000),  // no modifier
-        (0    | 0xE400),  // no media
-
-        1,  // row 1
-        3,  // col 3
-        // action 2
-        2,                // sequence length
-        (6    | 0xF000),  // key C
-        (0x01 | 0xE000),  // ctrl
-        (0    | 0xE400),  // no media
-        (25   | 0xF000),  // key V
-        (0x01 | 0xE000),  // ctrl
-        (0    | 0xE400),  // no media
-
-        2,  // row 2
-        3,  // col 3
-        // action 3
-        6,                // sequence length
-        (0    | 0xF000),  // no key
-        (0    | 0xE000),  // no modifier
-        (0xCD | 0xE400),  // Play / Pause
-        (14   | 0xF000),  // key K
-        (0    | 0xE000),  // no modifier
-        (0    | 0xE400),  // no media
-        (8    | 0xF000),  // key E
-        (0    | 0xE000),  // ctrl
-        (0    | 0xE400),  // no media
-        (5    | 0xF000),  // key B
-        (0    | 0xE000),  // ctrl
-        (0    | 0xE400),  // no media
-        (4    | 0xF000),  // key A
-        (0    | 0xE000),  // ctrl
-        (0    | 0xE400),  // no media
-        (5    | 0xF000),  // key B
-        (0    | 0xE000),  // ctrl
-        (0    | 0xE400),  // no media
-    };
-
-    uint16_t invalid_checksum[]
+    const uint16_t invalid_checksum[]
     {
         3,   // num keys
         22,  // incorrect checksum
@@ -100,8 +102,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0    | 0xE400),  // no media
     };
 
-
-    uint16_t invalid_sequence_lengths[]
+    const uint16_t invalid_sequence_lengths[]
     {
         3,      // num keys
         22664,  // checksum
@@ -149,7 +150,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0    | 0xE400),  // no media
     };
 
-    uint16_t invalid_keycodes[]
+    const uint16_t invalid_keycodes[]
     {
         3,      // num keys
         9354,  // checksum
@@ -203,7 +204,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         uint16_t cols[] = {0, 3, 3};
 
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.load(valid_data, sizeof(valid_data) / sizeof(valid_data[0]));
+        const auto success = keymap.load(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
         REQUIRE(success);
 
         for (unsigned r = 0; r < common::constants::NUM_ROWS; ++r)
@@ -291,5 +292,36 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         const auto success = keymap.load(invalid_keycodes,
             sizeof(invalid_keycodes) / sizeof(invalid_keycodes[0]));
         REQUIRE(!success);
+    }
+}
+
+TEST_CASE("Test translate scan result", "[KeyMap]")
+{
+    core::keyboard::KeyMap keymap;
+    const auto success = keymap.load(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
+    REQUIRE(success);
+
+
+    const common::KeyDescription descriptions[]
+    {
+        {0, 0, 0, 0, 1, 1, 0},  // 0
+        {1, 3, 1, 3, 1, 1, 0},  // 1
+        {2, 3, 2, 3, 1, 1, 0},  // 2
+    };
+    core::keyboard::KeyQueue queue;
+
+    SECTION("Test single key")
+    {
+        core::keyboard::KeyboardScanResult scan_result;
+        scan_result.num_pressed = 1;
+        scan_result.pressed[0] = &descriptions[0];
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+
+        CHECK(queue.size() == 1);
+        CHECK(queue.front().num_keys == 1);
+        CHECK(queue.front().keys[0] == (4 | 0xF000));
+        CHECK(queue.front().modifier == 0xE000);
+        CHECK(queue.front().media == 0xE400);
     }
 }

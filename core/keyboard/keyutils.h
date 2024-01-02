@@ -129,6 +129,11 @@ const bool IS_KEYCODE_VALID[116]
     true    // "KEY_F24":                  115  | 0xF000
 };
 
+inline bool key_is_blank(uint16_t key)
+{
+    return (key & 0x00FF) == 0;
+}
+
 inline bool key_is_valid_modifier(uint16_t key)
 {
     return (key & 0xFF00) == 0xE000;
