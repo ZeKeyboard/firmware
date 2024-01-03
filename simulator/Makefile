@@ -1,6 +1,6 @@
-KEYBOARD_LAYOUT_JSON = ../resources/keyboard-layout.json
+KEYBOARD_LAYOUT_JSON = ../submodules/scripts/resources/keyboard-layout.json
 PYTHON = python3
-GENERATE_LAYOUT = ../scripts/generate_layout.py
+GENERATE_LAYOUT = ../submodules/scripts/generate_layout.py
 
 CXX = g++
 CXX_FLAGS = -c -g -Wall -Wextra -std=gnu++23

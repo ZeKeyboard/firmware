@@ -9,8 +9,6 @@
 namespace simulator
 {
 
-const int SLEEP_MULTIPLIER = 100;
-
 class SimulatorDevice : public Device
 {
 public:

@@ -17,7 +17,7 @@ SimulatorWindow::SimulatorWindow(SimulatorDevice& device, core::Firmware& firmwa
     : device{device}, firmware{firmware}, keyboard_state{device, firmware.keymap, font}
 {
     window.create(sf::VideoMode(1920, 1080), "Simulator");
-    font.loadFromFile("../resources/arial.ttf");
+    font.loadFromFile("../submodules/scripts/resources/arial.ttf");
 }
 
 void SimulatorWindow::update()
