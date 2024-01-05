@@ -72,7 +72,7 @@ all: build/firmware.hex
 
 generated/hardware_layout.h: $(KEYBOARD_LAYOUT_JSON) $(GENERATE_LAYOUT)
 	mkdir -p $(@D)
-	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -o $@
+	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -l cpp -o $@
 
 build/pch/Arduino.h.gch:
 	mkdir -p $(@D)
