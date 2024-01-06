@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "../../common/constants.h"
 
 
 namespace core::keyboard::util
@@ -157,6 +158,29 @@ inline bool key_is_valid_standard_key(uint16_t key)
 inline bool key_is_system_key(uint16_t key)
 {
     return (key & 0xFF00) == 0xE200;
+}
+
+inline uint8_t get_layer_modifier_layer(uint16_t key)
+{
+    return key & 0x000F;
+}
+
+inline bool key_is_layer_hold_modifier(uint16_t key)
+{
+    if ((key & 0xFF00) != common::constants::LAYER_HOLD_MODIFIER)
+    {
+        return false;
+    }
+    return get_layer_modifier_layer(key) < common::constants::MAX_NUM_LAYERS;
+}
+
+inline bool key_is_layer_toggle_modifier(uint16_t key)
+{
+    if ((key & 0xFF00) != common::constants::LAYER_TOGGLE_MODIFIER)
+    {
+        return false;
+    }
+    return get_layer_modifier_layer(key) < common::constants::MAX_NUM_LAYERS;
 }
 
 }

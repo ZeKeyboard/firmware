@@ -5,8 +5,9 @@
 const uint16_t VALID_DATA[]
 {
     3,      // num keys
-    22664,  // checksum
+    22665,  // checksum
 
+    1,  // layer 1
     0,  // row 0
     0,  // col 0
     // action 1
@@ -15,6 +16,7 @@ const uint16_t VALID_DATA[]
     (0    | 0xE000),  // no modifier
     (0    | 0xE400),  // no media
 
+    0,  // layer 0
     1,  // row 1
     3,  // col 3
     // action 2
@@ -26,6 +28,7 @@ const uint16_t VALID_DATA[]
     (0x01 | 0xE000),  // ctrl
     (0    | 0xE400),  // no media
 
+    0,  // layer 0
     2,  // row 2
     3,  // col 3
     // action 3
@@ -59,6 +62,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         3,   // num keys
         22,  // incorrect checksum
 
+        0,  // layer 0
         0,  // row 0
         0,  // col 0
         // action 1
@@ -67,6 +71,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0    | 0xE000),  // no modifier
         (0    | 0xE400),  // no media
 
+        0,  // layer 0
         1,  // row 1
         3,  // col 3
         // action 2
@@ -78,6 +83,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0x01 | 0xE000),  // ctrl
         (0    | 0xE400),  // no media
 
+        0,  // layer 0
         2,  // row 2
         3,  // col 3
         // action 3
@@ -107,6 +113,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         3,      // num keys
         22664,  // checksum
 
+        0,  // layer 0
         0,  // row 0
         0,  // col 0
         // action 1
@@ -115,6 +122,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0    | 0xE000),  // no modifier
         (0    | 0xE400),  // no media
 
+        0,  // layer 0
         1,  // row 1
         3,  // col 3
         // action 2
@@ -126,6 +134,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0x01 | 0xE000),  // ctrl
         (0    | 0xE400),  // no media
 
+        0,  // layer 0
         2,  // row 2
         3,  // col 3
         // action 3
@@ -155,6 +164,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         3,      // num keys
         9354,  // checksum
 
+        0,  // layer 0
         0,  // row 0
         0,  // col 0
         // action 1
@@ -163,6 +173,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0    | 0xE000),  // no modifier
         (0    | 0xE400),  // no media
 
+        0,  // layer 0
         1,  // row 1
         3,  // col 3
         // action 2
@@ -174,6 +185,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         (0x01 | 0xE000),  // ctrl
         (5    | 0xF000),  // invalid media
 
+        0,  // layer 0
         2,  // row 2
         3,  // col 3
         // action 3
@@ -200,46 +212,50 @@ TEST_CASE("Test keymap load", "[KeyMap]")
 
     SECTION("Test valid")
     {
-        uint16_t rows[] = {0, 1, 2};
-        uint16_t cols[] = {0, 3, 3};
+        const uint16_t layers[] = {1, 0, 0};
+        const uint16_t rows[] = {0, 1, 2};
+        const uint16_t cols[] = {0, 3, 3};
 
         core::keyboard::KeyMap keymap;
         const auto success = keymap.load(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
         REQUIRE(success);
 
-        for (unsigned r = 0; r < common::constants::NUM_ROWS; ++r)
+        for (unsigned l = 0; l < common::constants::MAX_NUM_LAYERS; ++l)
         {
-            for (unsigned c = 0; c < common::constants::NUM_COLS; ++c)
+            for (unsigned r = 0; r < common::constants::NUM_ROWS; ++r)
             {
-                bool shouldNotBeNull = false;
-                for (int i = 0; i < 3; ++i)
+                for (unsigned c = 0; c < common::constants::NUM_COLS; ++c)
                 {
-                    if (rows[i] == r && cols[i] == c)
+                    bool shouldNotBeNull = false;
+                    for (int i = 0; i < 3; ++i)
                     {
-                        shouldNotBeNull = true;
-                        break;
+                        if (layers[i] == l && rows[i] == r && cols[i] == c)
+                        {
+                            shouldNotBeNull = true;
+                            break;
+                        }
                     }
-                }
-                if (shouldNotBeNull)
-                {
-                    continue;
-                }
+                    if (shouldNotBeNull)
+                    {
+                        continue;
+                    }
 
-                // assert that most are null
-                const auto action = keymap.get_action(r, c);
-                CHECK((action == nullptr));
+                    // assert that most are null
+                    const auto action = keymap.get_action(l, r, c);
+                    CHECK((action == nullptr));
+                }
             }
         }
 
-        const auto action1 = keymap.get_action(0, 0);
-        CHECK(action1 != nullptr);
+        const auto action1 = keymap.get_action(1, 0, 0);
+        REQUIRE(action1 != nullptr);
         CHECK(action1->sequence_length == 1);
         CHECK(action1->sequence[0].key == (4 | 0xF000));
         CHECK(action1->sequence[0].modifier == 0xE000);
         CHECK(action1->sequence[0].media == 0xE400);
 
-        const auto action2 = keymap.get_action(1, 3);
-        CHECK(action2 != nullptr);
+        const auto action2 = keymap.get_action(0, 1, 3);
+        REQUIRE(action2 != nullptr);
         CHECK(action2->sequence_length == 2);
         CHECK(action2->sequence[0].key == (6 | 0xF000));
         CHECK(action2->sequence[0].modifier == (0x01 | 0xE000));
@@ -248,8 +264,8 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         CHECK(action2->sequence[1].modifier == (0x01 | 0xE000));
         CHECK(action2->sequence[1].media == 0xE400);
 
-        const auto action3 = keymap.get_action(2, 3);
-        CHECK(action3 != nullptr);
+        const auto action3 = keymap.get_action(0, 2, 3);
+        REQUIRE(action3 != nullptr);
         CHECK(action3->sequence_length == 6);
         CHECK(action3->sequence[0].key == 0xF000);
         CHECK(action3->sequence[0].modifier == 0xE000);
@@ -316,7 +332,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
 
         keymap.translate_keyboard_scan_result(scan_result, queue);
 
-        CHECK(queue.size() == 0);
+        REQUIRE(queue.size() == 0);
     }
 
     SECTION("Test single key")
@@ -326,13 +342,27 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[0];
 
+        keymap.current_layer = 1;
         keymap.translate_keyboard_scan_result(scan_result, queue);
 
-        CHECK(queue.size() == 1);
-        CHECK(queue.front().num_keys == 1);
+        REQUIRE(queue.size() == 1);
+        REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (4 | 0xF000));
         CHECK(queue.front().modifier == 0xE000);
         CHECK(queue.front().media == 0xE400);
+        keymap.current_layer = 0;
+    }
+
+    SECTION("Test single key pressed on wrong layer")
+    {
+        core::keyboard::KeyQueue queue;
+        core::keyboard::KeyboardScanResult scan_result;
+        scan_result.num_pressed = 1;
+        scan_result.pressed[0] = &descriptions[0];
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+
+        REQUIRE(queue.size() == 0);
     }
 
     SECTION("Test multiple keys pressed")
@@ -342,6 +372,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
             7,      // num keys
             61144,  // checksum
 
+            0,  // layer 0
             0,  // row 0
             0,  // col 0
             1,                // sequence length
@@ -349,6 +380,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
             (0    | 0xE000),  // no modifier
             (0    | 0xE400),  // no media
 
+            0,  // layer 0
             0,  // row 0
             1,  // col 1
             1,                // sequence length
@@ -356,6 +388,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
             (0    | 0xE000),  // no modifier
             (0    | 0xE400),  // no media
 
+            0,  // layer 0
             0,  // row 0
             2,  // col 2
             1,                // sequence length
@@ -363,6 +396,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
             (2    | 0xE000),  // shift
             (0    | 0xE400),  // no media
 
+            0,  // layer 0
             0,  // row 0
             3,  // col 3
             1,                // sequence length
@@ -370,6 +404,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
             (1    | 0xE000),  // ctrl
             (0    | 0xE400),  // no media
 
+            0,  // layer 0
             0,  // row 0
             4,  // col 4
             1,                // sequence length
@@ -377,6 +412,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
             (0    | 0xE000),  // no modifier
             (0    | 0xE400),  // no media
 
+            0,  // layer 0
             0,  // row 0
             5,  // col 5
             1,                // sequence length
@@ -384,6 +420,7 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
             (0    | 0xE000),  // no modifier
             (0    | 0xE400),  // no media
 
+            0,  // layer 0
             0,  // row 0
             6,  // col 6
             1,                // sequence length
@@ -418,8 +455,8 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
 
         keymap.translate_keyboard_scan_result(scan_result, queue);
 
-        CHECK(queue.size() == 1);
-        CHECK(queue.front().num_keys == 6);
+        REQUIRE(queue.size() == 1);
+        REQUIRE(queue.front().num_keys == 6);
         CHECK(queue.front().keys[0] == (10 | 0xF000));
         CHECK(queue.front().keys[1] == (9  | 0xF000));
         CHECK(queue.front().keys[2] == (8  | 0xF000));
@@ -439,16 +476,170 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
 
         keymap.translate_keyboard_scan_result(scan_result, queue);
 
-        CHECK(queue.size() == 2);
-        CHECK(queue.front().num_keys == 1);
+        REQUIRE(queue.size() == 2);
+        REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (6 | 0xF000));
         CHECK(queue.front().modifier == (0x01 | 0xE000));
         CHECK(queue.front().media == 0xE400);
         queue.pop();
 
-        CHECK(queue.front().num_keys == 1);
+        REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (25 | 0xF000));
         CHECK(queue.front().modifier == (0x01 | 0xE000));
         CHECK(queue.front().media == 0xE400);
+    }
+
+    SECTION("Test layer modifiers")
+    {
+        const uint16_t data[]
+        {
+            7,      // num keys
+            32469,  // checksum
+
+            0,  // layer 0
+            0,  // row 0
+            0,  // col 0
+            1,                // sequence length
+            common::constants::LAYER_HOLD_1,
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            1,  // layer 1
+            0,  // row 0
+            3,  // col 1
+            1,                // sequence length
+            (5    | 0xF000),  // key B
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            0,  // layer 0
+            0,  // row 0
+            2,  // col 2
+            1,                // sequence length
+            common::constants::LAYER_TOGGLE_2,
+            (2    | 0xE000),  // shift
+            (0    | 0xE400),  // no media
+
+            2,  // layer 2
+            0,  // row 0
+            3,  // col 3
+            1,                // sequence length
+            (7    | 0xF000),  // key D
+            (1    | 0xE000),  // ctrl
+            (0    | 0xE400),  // no media
+
+            0,  // layer 0
+            0,  // row 0
+            3,  // col 3
+            1,                // sequence length
+            (8    | 0xF000),  // key E
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            0,  // layer 0
+            0,  // row 0
+            5,  // col 5
+            1,                // sequence length
+            (9    | 0xF000),  // key F
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+
+            0,  // layer 0
+            0,  // row 0
+            6,  // col 6
+            1,                // sequence length
+            (10   | 0xF000),  // key G
+            (0    | 0xE000),  // no modifier
+            (0    | 0xE400),  // no media
+        };
+
+        const common::KeyDescription descriptions[]
+        {
+            {0, 0, 0, 0, 1, 1, 0},  // 0
+            {0, 1, 1, 3, 1, 1, 0},  // 1
+            {0, 2, 2, 3, 1, 1, 0},  // 2
+            {0, 3, 2, 3, 1, 1, 0},  // 3
+            {0, 4, 2, 3, 1, 1, 0},  // 4
+            {0, 5, 2, 3, 1, 1, 0},  // 5
+            {0, 6, 2, 3, 1, 1, 0},  // 6
+        };
+
+        core::keyboard::KeyMap keymap;
+        const auto success = keymap.load(data, sizeof(data) / sizeof(data[0]));
+        REQUIRE(success);
+
+        core::keyboard::KeyQueue queue;
+        core::keyboard::KeyboardScanResult scan_result;
+        scan_result.num_pressed = 2;
+        scan_result.pressed[0] = &descriptions[0];  // hold layer 1
+        scan_result.pressed[1] = &descriptions[3];  // key on layer 1
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+        REQUIRE(queue.size() == 1);
+        REQUIRE(queue.front().num_keys == 1);
+
+        // the key on layer 1 should be registered
+        CHECK(queue.front().keys[0] == (5 | 0xF000));
+        queue.pop();
+
+        scan_result.num_pressed = 2;
+        scan_result.pressed[0] = &descriptions[0];  // hold layer 1
+        scan_result.pressed[1] = &descriptions[5];  // key which does not have anything on layer 1
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+        REQUIRE(queue.size() == 0);  // nothing should be registered since we have fallback turned off
+
+        queue.pop();
+
+        // layer 0 key should be registered when no layer modifiers are active
+        scan_result.num_pressed = 1;
+        scan_result.pressed[0] = &descriptions[3];
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+        REQUIRE(queue.size() == 1);
+        REQUIRE(queue.front().num_keys == 1);
+        CHECK(queue.front().keys[0] == (8 | 0xF000));
+
+        queue.pop();
+
+        // test toggle layer
+        scan_result.num_pressed = 2;
+        scan_result.pressed[0] = &descriptions[2];  // toggle layer 2
+        scan_result.pressed[1] = &descriptions[3];  // key on layer 2
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+        REQUIRE(queue.size() == 1);
+        REQUIRE(queue.front().num_keys == 1);
+        CHECK(queue.front().keys[0] == (7 | 0xF000));
+        CHECK(queue.front().modifier == (1 | 0xE000));
+
+        queue.pop();
+
+        // layer 2 should still be active
+        scan_result.num_pressed = 1;
+        scan_result.pressed[0] = &descriptions[3];  // key on layer 2
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+        REQUIRE(queue.size() == 1);
+        REQUIRE(queue.front().num_keys == 1);
+        CHECK(queue.front().keys[0] == (7 | 0xF000));
+        CHECK(queue.front().modifier == (1 | 0xE000));
+
+        queue.pop();
+
+        // layer 2 should be deactivated
+        scan_result.num_pressed = 1;
+        scan_result.pressed[0] = &descriptions[2];  // toggle layer 2
+
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+        REQUIRE(queue.size() == 0);
+
+        // layer 2 should no longer be active
+        scan_result.num_pressed = 1;
+        scan_result.pressed[0] = &descriptions[3];  // key on layer 2 but also layer 0
+        keymap.translate_keyboard_scan_result(scan_result, queue);
+        REQUIRE(queue.size() == 1);
+        REQUIRE(queue.front().num_keys == 1);
+        CHECK(queue.front().keys[0] == (8 | 0xF000));
     }
 }

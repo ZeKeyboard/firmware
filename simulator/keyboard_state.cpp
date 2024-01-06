@@ -81,7 +81,7 @@ void KeyboardState::draw_row_and_col_state(
         window.draw(col_rect);
     }
 
-    const auto action = keymap.get_action(row, col);
+    const auto action = keymap.get_action(0, row, col);
     if (action != nullptr && action->is_single_key())
     {
         sf::Text text;

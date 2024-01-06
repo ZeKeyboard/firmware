@@ -14,6 +14,6 @@ where `N` is the sequence length.
 
 KeyMap:
 ```
-[N, S, row_1, col_1, Action_1, ..., row_N, col_N, Action_N]
+[N, S, layer_1, row_1, col_1, Action_1, ..., layer_N, row_N, col_N, Action_N]
 ```
 where N is the number of keys, and S is the total sum of every uint16 after this modulo 65500.

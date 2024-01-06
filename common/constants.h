@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../generated/hardware_layout.h"
+#include "custom_keycodes.h"
+
 
 namespace common::constants
 {
@@ -10,6 +12,8 @@ const int MAX_JUST_PRESSED_KEYS = TOTAL_NUM_KEYS;
 const int MAX_QUEUED_KEY_EVENTS = 20;
 
 const int MAX_KEYREPORT_KEYS = 6;
+
+const int MAX_NUM_LAYERS = 3;
 
 const uint8_t COL_PINS[] =
 {
