@@ -129,4 +129,9 @@ uint32_t SimulatorDevice::get_timer_micros() const
     return (std::chrono::high_resolution_clock::now().time_since_epoch().count() - start_time) / 1000;
 }
 
+uint32_t SimulatorDevice::millis() const
+{
+    return std::chrono::high_resolution_clock::now().time_since_epoch().count() / 1000000;
+}
+
 }

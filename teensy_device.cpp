@@ -159,7 +159,17 @@ void TeensyDevice::start_timer()
     start_time = micros();
 }
 
-uint32_t TeensyDevice::get_timer_micros() const
+uint32_t TeensyDevice::get_timer_micros()
 {
+    if (micros() < start_time)
+    {
+        start_time = micros();
+        return 0;
+    }
     return micros() - start_time;
+}
+
+uint32_t TeensyDevice::millis() const
+{
+    return millis();
 }

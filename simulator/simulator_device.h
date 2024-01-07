@@ -58,6 +58,7 @@ public:
 
     virtual void start_timer() override;
     virtual uint32_t get_timer_micros() const override;
+    virtual uint32_t millis() const override;
 
     uint8_t last_read_col;
     bool row_state[common::constants::NUM_ROWS];

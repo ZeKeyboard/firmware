@@ -61,7 +61,12 @@ public:
     virtual void serial_println(int32_t val) = 0;
 
     virtual void start_timer() = 0;
-    virtual uint32_t get_timer_micros() const = 0;
+    virtual uint32_t get_timer_micros() = 0;
+
+    /**
+     * Milliseconds since the device was started.
+     */
+    virtual uint32_t millis() const = 0;
 
     inline void set_keyboard_key_by_index(const uint8_t index, const uint8_t code)
     {

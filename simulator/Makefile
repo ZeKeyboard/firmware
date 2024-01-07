@@ -1,4 +1,5 @@
 KEYBOARD_LAYOUT_JSON = ../submodules/scripts/resources/keyboard-layout.json
+EXTRA_LEDS_JSON = submodules/scripts/resources/extra_leds.json
 PYTHON = python3
 GENERATE_LAYOUT = ../submodules/scripts/generate_layout.py
 
@@ -16,7 +17,7 @@ all: simulator
 
 ../generated/hardware_layout.h: $(KEYBOARD_LAYOUT_JSON) $(GENERATE_LAYOUT)
 	mkdir -p $(@D)
-	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -l cpp -o $@
+	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -e $(EXTRA_LEDS_JSON) -l cpp -o $@
 
 obj/%.o: %.cpp $(HEADERS) ../generated/hardware_layout.h
 	mkdir -p $(@D)

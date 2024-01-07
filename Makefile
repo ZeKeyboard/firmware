@@ -28,6 +28,7 @@ PYTHON = python3
 GENERATE_LAYOUT = submodules/scripts/generate_layout.py
 
 KEYBOARD_LAYOUT_JSON = submodules/scripts/resources/keyboard-layout.json
+EXTRA_LEDS_JSON = submodules/scripts/resources/extra_leds.json
 
 PRECOMPILE_FLAGS = -x c++-header -O2 -g -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -std=gnu++17 -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=158 -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH -I$(TEENSY4_CORE)
 
@@ -72,7 +73,7 @@ all: build/firmware.hex
 
 generated/hardware_layout.h: $(KEYBOARD_LAYOUT_JSON) $(GENERATE_LAYOUT)
 	mkdir -p $(@D)
-	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -l cpp -o $@
+	$(PYTHON) $(GENERATE_LAYOUT) -i $(KEYBOARD_LAYOUT_JSON) -e $(EXTRA_LEDS_JSON) -l cpp -o $@
 
 build/pch/Arduino.h.gch:
 	mkdir -p $(@D)
