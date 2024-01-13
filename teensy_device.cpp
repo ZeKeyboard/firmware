@@ -1,6 +1,10 @@
 #include "teensy_device.h"
+#include "generated/hardware_layout.h"
 #include <Arduino.h>
 #include <usb_keyboard.h>
+
+TeensyDevice::TeensyDevice(CRGB* leds) : leds{leds}
+{ }
 
 
 void TeensyDevice::sleep_micros(const int micros)
@@ -172,4 +176,16 @@ uint32_t TeensyDevice::get_timer_micros()
 uint32_t TeensyDevice::millis() const
 {
     return millis();
+}
+
+void TeensyDevice::set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b)
+{
+    leds[index].r = r;
+    leds[index].g = g;
+    leds[index].b = b;
+}
+
+void TeensyDevice::update_leds()
+{
+    FastLED.show();
 }

@@ -68,6 +68,9 @@ public:
      */
     virtual uint32_t millis() const = 0;
 
+    virtual void set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b) = 0;
+    virtual void update_leds() = 0;
+
     inline void set_keyboard_key_by_index(const uint8_t index, const uint8_t code)
     {
         // This is a bit of a hack, but it works.

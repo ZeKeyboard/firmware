@@ -1,10 +1,16 @@
 #pragma once
 
 #include "device.h"
+#include "common/constants.h"
+#include <FastLED.h>
+#include <OctoWS2811.h>
+
 
 class TeensyDevice : public Device
 {
 public:
+    TeensyDevice(CRGB* leds);
+
     virtual void sleep_millis(const int millis) override;
     virtual void sleep_micros(const int micros) override;
     virtual void gpio_setup(const uint8_t pin, const PinMode mode) override;
@@ -45,6 +51,10 @@ public:
     virtual uint32_t get_timer_micros() override;
     virtual uint32_t millis() const override;
 
+    virtual void set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b) override;
+    virtual void update_leds() override;
+
 private:
     uint32_t start_time;
+    CRGB* leds;
 };

@@ -124,9 +124,19 @@ void SimulatorDevice::start_timer()
     start_time = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 }
 
-uint32_t SimulatorDevice::get_timer_micros() const
+uint32_t SimulatorDevice::get_timer_micros()
 {
     return (std::chrono::high_resolution_clock::now().time_since_epoch().count() - start_time) / 1000;
+}
+
+void SimulatorDevice::set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b)
+{
+    // TODO implement
+}
+
+void SimulatorDevice::update_leds()
+{
+    // TODO implement
 }
 
 uint32_t SimulatorDevice::millis() const
