@@ -4,36 +4,26 @@
 namespace core::util
 {
 
-void Timer::start(Device& device)
+void Timer::start(const Device& device)
 {
     running = true;
-    remainingTime = duration;
+    time_remaining = duration;
     start_time = device.millis();
 }
 
-void Timer::stop()
-{
-    running = false;
-}
-
-void Timer::update(Device& device)
+void Timer::update(const Device& device)
 {
     if (running)
     {
         uint32_t current_time = device.millis();
         uint32_t elapsed = current_time - start_time;
-        remainingTime = duration - elapsed;
+        time_remaining = duration - elapsed;
         if (elapsed >= duration)
         {
             running = false;
-            remainingTime = 0;
+            time_remaining = 0;
         }
     }
-}
-
-bool Timer::is_running() const
-{
-    return running;
 }
 
 bool Timer::is_finished() const
@@ -43,12 +33,12 @@ bool Timer::is_finished() const
 
 uint32_t Timer::remaining_time() const
 {
-    return remainingTime;
+    return time_remaining;
 }
 
 float Timer::progress() const
 {
-    return 1.0f - static_cast<float>(remainingTime) / static_cast<float>(duration);
+    return 1.0f - static_cast<float>(time_remaining) / static_cast<float>(duration);
 }
 
 }
