@@ -8,3 +8,4 @@ generated/
 .gdb_history
 test_main
 __pycache__/
+simulator/common/

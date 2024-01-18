@@ -1,37 +1,34 @@
 #pragma once
 
-#include <stdint.h>
 #include "../../device.h"
-#include "../../common/key_properties.h"
-#include "../../common/constants.h"
 #include "color.h"
+#include "ledstate.h"
+#include "../../common/constants.h"
 #include "../util/timer.h"
+#include "schemes/scheme.h"
 
 
 namespace core::backlight
 {
 
-struct LEDState
-{
-    Color color;
-
-    bool blinking = false;
-    util::Timer blink_timer;
-
-    bool fading = false;
-    util::Timer fade_timer;
-
-    const common::LEDDescription* description;
-};
-
 class Backlight
 {
 public:
-    Backlight(Device& device);
-    void update();
+    Backlight(Device& device, schemes::Scheme* schemes[], int num_schemes);
+    void update(const core::keyboard::KeyboardScanResult& scan_result);
+    void increment_scheme();
+
 private:
+    Color update_fade(LEDState& state);
+    Color update_blink(LEDState& state);
+
     Device& device;
-    LEDState ledStates[common::constants::TOTAL_NUM_LEDS];
+    LEDState led_states[common::constants::TOTAL_NUM_LEDS];
+
+    int current_scheme_index = 0;
+
+    const int num_schemes;
+    schemes::Scheme** schemes;
 };
 
 }

@@ -28,4 +28,7 @@ const uint8_t ROW_PINS[] =
 
 const uint16_t CHECKSUM_PERIOD = 65500;
 
+const uint32_t DEFAULT_BLINK_PERIOD = 500;
+const uint32_t DEFAULT_FADE_TIME = 1000;
+
 }
