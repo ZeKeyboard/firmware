@@ -1,11 +1,13 @@
 KEYBOARD_LAYOUT_JSON = ../submodules/scripts/resources/keyboard-layout.json
-EXTRA_LEDS_JSON = submodules/scripts/resources/extra_leds.json
+EXTRA_LEDS_JSON = ../submodules/scripts/resources/extra_leds.json
 PYTHON = python3
 GENERATE_LAYOUT = ../submodules/scripts/generate_layout.py
 
 CXX = g++
 CXX_FLAGS = -c -g -Wall -Wextra -std=gnu++23
-SOURCES = $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard ../core/*.cpp) $(wildcard ../core/**/*.cpp) $(wildcard ../common/*.cpp) $(wildcard ../common/**/*.cpp)
+TEST_CXX = $(wildcard ../core/test/*.cpp) $(wildcard ../core/**/test/*.cpp)
+SOURCES_NON_FILTERED = $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard ../core/*.cpp) $(wildcard ../core/**/*.cpp) $(wildcard ../core/**/**/*.cpp) $(wildcard ../common/*.cpp) $(wildcard ../common/**/*.cpp)
+SOURCES = $(filter-out $(TEST_CXX), $(SOURCES_NON_FILTERED))
 HEADERS = $(wildcard *.h) $(wildcard **/*.h) $(wildcard ../core/*.h) $(wildcard ../core/**/*.h) $(wildcard ../generated/*.h) $(wildcard ../common/*.h) $(wildcard ../common/**/*.h)
 
 TARGETS = $(patsubst %.cpp,obj/%.o,$(SOURCES))

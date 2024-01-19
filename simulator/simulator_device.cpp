@@ -131,13 +131,14 @@ uint32_t SimulatorDevice::get_timer_micros()
 
 void SimulatorDevice::set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b)
 {
-    // TODO implement
+    std::lock_guard<std::mutex> lock(mutex);
+    led_colors_r[index] = r;
+    led_colors_g[index] = g;
+    led_colors_b[index] = b;
 }
 
 void SimulatorDevice::update_leds()
-{
-    // TODO implement
-}
+{ }
 
 uint32_t SimulatorDevice::millis() const
 {

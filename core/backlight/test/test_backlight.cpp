@@ -56,6 +56,7 @@ TEST_CASE("Test backlight", "[Backlight]")
         backlight.update(core::keyboard::KeyboardScanResult{});
         for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
         {
+            REQUIRE(device.leds_updated);
             auto c = static_cast<uint8_t>(255.0f * static_cast<float>(i) / static_cast<float>(common::constants::TOTAL_NUM_LEDS));
             auto not_c = static_cast<uint8_t>(255.0f * (1.0f - static_cast<float>(i) / static_cast<float>(common::constants::TOTAL_NUM_LEDS)));
             REQUIRE(device.led_colors_r[i] == c);
@@ -73,24 +74,28 @@ TEST_CASE("Test backlight", "[Backlight]")
 
         device.current_millis = 0;
         backlight.update(core::keyboard::KeyboardScanResult{});
+        REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 255);
         CHECK(device.led_colors_g[0] == 127);
         CHECK(device.led_colors_b[0] == 255);
 
         device.current_millis = 99;
         backlight.update(core::keyboard::KeyboardScanResult{});
+        REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 255);
         CHECK(device.led_colors_g[0] == 127);
         CHECK(device.led_colors_b[0] == 255);
 
         device.current_millis = 150;
         backlight.update(core::keyboard::KeyboardScanResult{});
+        REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 0);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 0);
 
         device.current_millis = 251;
         backlight.update(core::keyboard::KeyboardScanResult{});
+        REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 255);
         CHECK(device.led_colors_g[0] == 127);
         CHECK(device.led_colors_b[0] == 255);
@@ -106,18 +111,21 @@ TEST_CASE("Test backlight", "[Backlight]")
 
         device.current_millis = 0;
         backlight.update(core::keyboard::KeyboardScanResult{});
+        REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 0);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 255);
 
         device.current_millis = 50;
         backlight.update(core::keyboard::KeyboardScanResult{});
+        REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 127);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 127);
 
         device.current_millis = 100;
         backlight.update(core::keyboard::KeyboardScanResult{});
+        REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 255);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 0);

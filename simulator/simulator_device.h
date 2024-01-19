@@ -70,6 +70,10 @@ public:
     uint8_t current_modifier;
     uint8_t current_media;
 
+    uint8_t led_colors_r[common::constants::TOTAL_NUM_LEDS];
+    uint8_t led_colors_g[common::constants::TOTAL_NUM_LEDS];
+    uint8_t led_colors_b[common::constants::TOTAL_NUM_LEDS];
+
 private:
     uint32_t start_time;
 

@@ -21,6 +21,7 @@ TEST_CXX_FLAGS = -c -g -Wall -Wextra -std=gnu++23
 CXX = $(TEENSY_COMPILE)/arm-none-eabi-g++
 CC = $(TEENSY_COMPILE)/arm-none-eabi-gcc
 AR = $(TEENSY_COMPILE)/arm-none-eabi-gcc-ar
+SIZE = $(TEENSY_COMPILE)/arm-none-eabi-size
 PRECOMPILE_HELPER = $(TEENSY_TOOLS)/teensy-tools/1.58.0/precompile_helper
 OBJCOPY = $(TEENSY_COMPILE)/arm-none-eabi-objcopy
 POST_COMPILE = $(TEENSY_TOOLS)/teensy-tools/1.58.0/teensy_post_compile
@@ -65,8 +66,10 @@ OCTOWS2811_SOURCES = $(wildcard $(TEENSY_LIBS)/OctoWS2811/*.cpp)
 CORE_CPP_SOURCES = $(wildcard $(TEENSY4_CORE)/*.cpp)
 CORE_C_SOURCES = $(wildcard $(TEENSY4_CORE)/*.c)
 LIB_SOURCES = $(FASTLED_SOURCES) $(SPI_SOURCES) $(OCTOWS2811_SOURCES)
-NON_HARDWARE_SOURCES = $(wildcard core/*.cpp) $(wildcard core/**/*.cpp) $(wildcard common/*.cpp) $(wildcard common/**/*.cpp)
-TEST_SOURCES = $(NON_HARDWARE_SOURCES) $(wildcard core/test/*.cpp) $(wildcard core/**/test/*.cpp) $(CATCH2_PATH)/extras/catch_amalgamated.cpp
+NON_HARDWARE_SOURCES_NON_FILTERED = $(wildcard core/*.cpp) $(wildcard core/**/**/*.cpp) $(wildcard core/**/*.cpp) $(wildcard common/*.cpp) $(wildcard common/**/*.cpp) $(wildcard common/**/**/*.cpp)
+TEST_CPP = $(wildcard core/test/*.cpp) $(wildcard core/**/test/*.cpp) $(CATCH2_PATH)/extras/catch_amalgamated.cpp
+TEST_SOURCES = $(NON_HARDWARE_SOURCES) $(TEST_CPP)
+NON_HARDWARE_SOURCES = $(filter-out $(TEST_CPP), $(NON_HARDWARE_SOURCES_NON_FILTERED))
 SOURCES = $(wildcard *.cpp) $(NON_HARDWARE_SOURCES)
 
 all: build/firmware.hex
@@ -106,6 +109,10 @@ TEST_TARGETS = $(patsubst %.cpp,build/test/%.o,$(TEST_SOURCES))
 
 build/firmware.elf: $(TARGETS)
 	@$(CC) $(LINK_FLAGS) -o $@ $(TARGETS) build/core/core.a -Lbuild/ -larm_cortexM7lfsp_math -lm -lstdc++
+	@echo
+	@echo "Firmware size:"
+	@$(SIZE) -B -d $@
+	@echo
 
 build/firmware.hex: build/firmware.elf
 	$(OBJCOPY) -O ihex -R .eeprom $< $@

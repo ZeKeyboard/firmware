@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../device.h"
+#include "backlight/backlight.h"
+#include "backlight/schemes/wave.h"
 #include "keyboard/keymap.h"
 #include "keyboard/keyscan.h"
 
@@ -22,6 +24,17 @@ private:
     keyboard::KeyScanner key_scanner;
     keyboard::KeyQueue key_queue;
     keyboard::KeyMap keymap;
+
+    // Backlight schemes
+    backlight::schemes::Wave wave;
+
+    static constexpr int NUM_SCHEMES = 1;
+    backlight::schemes::Scheme* schemes[NUM_SCHEMES] =
+    {
+        &wave
+    };
+
+    backlight::Backlight backlight;
 };
 
 }

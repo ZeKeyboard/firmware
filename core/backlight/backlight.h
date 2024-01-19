@@ -14,7 +14,7 @@ namespace core::backlight
 class Backlight
 {
 public:
-    Backlight(Device& device, schemes::Scheme* schemes[], int num_schemes);
+    Backlight(Device& device, schemes::Scheme** schemes, int num_schemes);
     void update(const core::keyboard::KeyboardScanResult& scan_result);
     void increment_scheme();
 

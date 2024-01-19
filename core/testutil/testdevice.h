@@ -99,6 +99,7 @@ public:
         led_colors_r[index] = r;
         led_colors_g[index] = g;
         led_colors_b[index] = b;
+        leds_updated = false;
     }
 };
 

@@ -88,6 +88,7 @@ void SimulatorWindow::draw()
     draw_sent_keys();
 }
 
+
 void SimulatorWindow::draw_sent_keys()
 {
     sf::Text text;

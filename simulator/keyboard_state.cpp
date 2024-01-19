@@ -109,15 +109,6 @@ void KeyboardState::draw(sf::RenderWindow& window)
     rectangle.setFillColor(sf::Color{100, 100, 100, 255});
     rectangle.setOutlineThickness(5);
 
-    const sf::Color colors[6] = {
-        sf::Color::Red,
-        sf::Color::Green,
-        sf::Color::Blue,
-        sf::Color::Yellow,
-        sf::Color::Magenta,
-        sf::Color::Cyan
-    };
-
     for (const auto& key : keys)
     {
         if (key.pressed)
@@ -133,7 +124,13 @@ void KeyboardState::draw(sf::RenderWindow& window)
             rectangle.setFillColor(sf::Color{100, 100, 100, 255});
         }
 
-        rectangle.setOutlineColor(colors[key.description->row]);
+        const auto led_description = key.description->get_associated_led();
+        const auto led_index = led_description.strip_index;
+        const auto r = device.led_colors_r[led_index];
+        const auto g = device.led_colors_g[led_index];
+        const auto b = device.led_colors_b[led_index];
+
+        rectangle.setOutlineColor(sf::Color{r, g, b, 255});
         const auto width = key.description->width * KEY_SIZE;
         const auto height = key.description->height * KEY_SIZE;
         rectangle.setSize(sf::Vector2f{width, height});
@@ -144,5 +141,6 @@ void KeyboardState::draw(sf::RenderWindow& window)
         draw_row_and_col_state(window, key.description->row, key.description->col, x, y);
     }
 }
+
 
 }
