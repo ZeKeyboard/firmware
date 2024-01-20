@@ -8,14 +8,14 @@ void Timer::start(const Device& device)
 {
     running = true;
     time_remaining = duration;
-    start_time = device.millis();
+    start_time = device.milliseconds_since_start();
 }
 
 void Timer::update(const Device& device)
 {
     if (running)
     {
-        uint32_t current_time = device.millis();
+        uint32_t current_time = device.milliseconds_since_start();
         uint32_t elapsed = current_time - start_time;
         time_remaining = duration - elapsed;
         if (elapsed >= duration)

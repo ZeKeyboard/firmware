@@ -49,7 +49,7 @@ public:
 
     virtual void start_timer() override;
     virtual uint32_t get_timer_micros() override;
-    virtual uint32_t millis() const override;
+    virtual uint32_t milliseconds_since_start() const override;
 
     virtual void set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b) override;
     virtual void update_leds() override;

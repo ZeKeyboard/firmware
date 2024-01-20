@@ -58,7 +58,7 @@ public:
     /**
      * Milliseconds since the device was started.
      */
-    virtual uint32_t millis() const { return 0; }
+    virtual uint32_t milliseconds_since_start() const { return 0; }
 
     virtual void set_led(uint16_t, uint8_t, uint8_t, uint8_t) { }
     virtual void update_leds() { }
@@ -79,7 +79,7 @@ public:
     }
 
     uint32_t current_millis = 0;
-    uint32_t millis() const override
+    uint32_t milliseconds_since_start() const override
     {
         return current_millis;
     }

@@ -140,7 +140,7 @@ void SimulatorDevice::set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b)
 void SimulatorDevice::update_leds()
 { }
 
-uint32_t SimulatorDevice::millis() const
+uint32_t SimulatorDevice::milliseconds_since_start() const
 {
     return std::chrono::high_resolution_clock::now().time_since_epoch().count() / 1000000;
 }

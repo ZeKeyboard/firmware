@@ -173,7 +173,7 @@ uint32_t TeensyDevice::get_timer_micros()
     return micros() - start_time;
 }
 
-uint32_t TeensyDevice::millis() const
+uint32_t TeensyDevice::milliseconds_since_start() const
 {
     return millis();
 }

@@ -30,7 +30,9 @@ void Wave::update(const core::keyboard::KeyboardScanResult& scan_result,
     for (int i = 0; i < scan_result.num_pressed; ++i)
     {
         const common::LEDDescription pressed = scan_result.just_pressed[i]->get_associated_led();
-        led_states[pressed.strip_index].start_fade(
+        const auto index = pressed.strip_index;
+        auto& state = led_states[index];
+        state.start_fade(
             device, Color{1.0f, 1.0f, 1.0f}, PRESS_FADE_TIME);
     }
 

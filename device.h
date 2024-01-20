@@ -66,7 +66,7 @@ public:
     /**
      * Milliseconds since the device was started.
      */
-    virtual uint32_t millis() const = 0;
+    virtual uint32_t milliseconds_since_start() const = 0;
 
     virtual void set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b) = 0;
     virtual void update_leds() = 0;
