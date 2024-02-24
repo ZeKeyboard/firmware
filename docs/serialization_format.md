@@ -1,6 +1,7 @@
 # General
 
 - Everything is `uint16_t`
+- Everything is 0 indexed
 
 ## Action
 
@@ -8,7 +9,7 @@ Action:
 ```
 [N, key_1, modifier_1, media_1, ..., key_N, modifier_N, media_N]
 ```
-where `N` is the sequence length.
+where `N` is the sequence length. A blank key is 0xF000, a blank modifier is 0xE000 and a blank media key is 0xE400.
 
 ## KeyMap
 

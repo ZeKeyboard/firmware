@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <cmath>
+#include "../util/math_utils.h"
+
 
 namespace core::backlight
 {
@@ -49,8 +51,13 @@ struct Color
      */
     static Color from_hsv(float hue, float saturation, float value)
     {
-        // This function was AI-generated
-        const float h = hue * 6.0f;
+        // Most of this function was AI-generated
+
+        // we need to clamp the hue as it otherwise manifests itself as a numerical
+        // instability around red.
+        const float hue_clamped = core::util::clamp(hue, 0.0001f, 0.9999f);
+
+        const float h = hue_clamped * 6.0f;
         const float f = h - floor(h);
         const float p = value * (1.0f - saturation);
         const float q = value * (1.0f - saturation * f);
