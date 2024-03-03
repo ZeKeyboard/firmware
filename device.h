@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstdint>
 #include <stdint.h>
+
 
 enum class PinMode
 {
@@ -37,8 +39,32 @@ public:
     virtual void set_keyboard_media(const uint16_t media) = 0;
     virtual void keyboard_send() = 0;
 
-    // TODO may need more work
-    // virtual bool sd_read(const char* filename, char* buffer, const uint32_t buffer_size) = 0;
+    /**
+     * Initialize the SD card.
+     * 
+     * @return true if the SD card was initialized successfully, false otherwise.
+     */
+    virtual bool sd_init() = 0;
+    /**
+     * Read the contents of a file from the SD card.
+     * 
+     * @param filename The name of the file to read.
+     * @param buffer A pointer to a buffer that will be allocated and filled with the contents of the file. Remember to delete[] this buffer when you're done with it.
+     * @param num_read_bytes The number of bytes read from the file.
+     * 
+     * @return true if the file was read successfully, false otherwise.
+     */
+    virtual bool sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const = 0;
+    /**
+     * Write the contents of a buffer to a file on the SD card.
+     * 
+     * @param filename The name of the file to write to.
+     * @param buffer A pointer to the buffer containing the data to write.
+     * @param num_bytes The number of bytes to write to the file.
+     * 
+     * @return true if the file was written successfully, false otherwise.
+     */
+    virtual bool sd_write(const char* filename, const char* buffer, const uint32_t num_bytes) = 0;
 
     virtual uint16_t get_keyboard_leds() = 0;
 

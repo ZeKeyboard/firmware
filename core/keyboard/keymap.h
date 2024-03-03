@@ -25,9 +25,6 @@ class KeyMap
 public:
     void translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue);
 
-    void load_default();
-    bool load(const uint16_t* data, int size);
-
     /**
      * Returns the action at the given layer, row, and column.
      * If there is no action at the given location and the layer is not the base layer,
@@ -35,9 +32,16 @@ public:
      * returns nullptr.
      */
     Action* get_action(int layer, int row, int col) const;
+
     int current_layer = 0;
 
+    bool load_from_sd_else_default(Device& device);
+    bool deserialize_keymap(const uint16_t* data, int size);
+
 private:
+
+    void load_default();
+
     // TODO make this configurable (see issue #1)
     bool layer_fallback = false;
 

@@ -18,6 +18,8 @@ public:
     void update(const core::keyboard::KeyboardScanResult& scan_result);
     void increment_scheme();
 
+    void signal_failure();
+
 private:
     Color update_fade(LEDState& state);
     Color update_blink(LEDState& state);

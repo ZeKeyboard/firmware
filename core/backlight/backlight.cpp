@@ -1,4 +1,5 @@
 #include "backlight.h"
+#include "color.h"
 
 namespace core::backlight
 {
@@ -31,6 +32,15 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result)
 
     }
     device.update_leds();
+}
+
+void Backlight::signal_failure()
+{
+    for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+    {
+        LEDState& state = led_states[i];
+        state.start_fade(device, colors::RED, 10000);
+    }
 }
 
 }

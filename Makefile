@@ -44,7 +44,7 @@ CC_FLAGS = -c -O2 -g -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -m
 
 OBJCOPY_FLAGS = -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0
 
-LIB_SRC = FastLED/src SPI OctoWS2811
+LIB_SRC = FastLED/src SPI OctoWS2811 SD/src SdFat/src
 
 LIB_PATHS = $(patsubst %,$(TEENSY_LIBS)/%,$(LIB_SRC)))
 
@@ -53,19 +53,23 @@ INCLUDE_LIBS = -Ibuild/pch -I$(TEENSY4_CORE) $(patsubst %,-I$(TEENSY_LIBS)/%,$(L
 FASTLED_HEADERS = $(wildcard $(TEENSY_LIBS)/FastLED/src/*.h)
 SPI_HEADERS = $(wildcard $(TEENSY_LIBS)/SPI/*.h)
 OCTOWS2811_HEADERS = $(wildcard $(TEENSY_LIBS)/OctoWS2811/*.h)
+SD_HEADERS = $(wildcard $(TEENSY_LIBS)/SD/src/*.h)
+SDFAT_HEADERS = $(wildcard $(TEENSY_LIBS)/SdFat/src/*.h) $(wildcard $(TEENSY_LIBS)/SdFat/src/common/*.h) $(wildcard $(TEENSY_LIBS)/SdFat/src/ExFatLib/*.h) $(wildcard $(TEENSY_LIBS)/SdFat/src/FatLib/*.h) $(wildcard $(TEENSY_LIBS)/SdFat/src/FsLib/*.h) $(wildcard $(TEENSY_LIBS)/SdFat/src/SdCard/*.h) $(wildcard $(TEENSY_LIBS)/SdFat/src/iostream/*.h) $(wildcard $(TEENSY_LIBS)/SdFat/src/SpiDriver/*.h)
 
 CORE_HEADERS = $(wildcard $(TEENSY4_CORE)/*.h)
-LIB_HEADERS = $(FASTLED_HEADERS) $(SPI_HEADERS) $(OCTOWS2811_HEADERS)
+LIB_HEADERS = $(FASTLED_HEADERS) $(SPI_HEADERS) $(OCTOWS2811_HEADERS) $(SD_HEADERS) $(SDFAT_HEADERS)
 NON_HARDWARE_HEADERS = $(wildcard core/*.h) $(wildcard core/**/*.h) $(wildcard common/*.h) $(wildcard common/**/*.h) $(wildcard generated/*.h)
 HEADERS = $(wildcard *.h) $(NON_HARDWARE_HEADERS)
 
 FASTLED_SOURCES = $(wildcard $(TEENSY_LIBS)/FastLED/src/*.cpp)
 SPI_SOURCES = $(wildcard $(TEENSY_LIBS)/SPI/*.cpp)
 OCTOWS2811_SOURCES = $(wildcard $(TEENSY_LIBS)/OctoWS2811/*.cpp)
+SD_SOURCES = $(wildcard $(TEENSY_LIBS)/SD/src/*.cpp)
+SDFAT_SOURCES = $(wildcard $(TEENSY_LIBS)/SdFat/src/*.cpp) $(wildcard $(TEENSY_LIBS)/SdFat/src/common/*.cpp) $(wildcard $(TEENSY_LIBS)/SdFat/src/ExFatLib/*.cpp) $(wildcard $(TEENSY_LIBS)/SdFat/src/FatLib/*.cpp) $(wildcard $(TEENSY_LIBS)/SdFat/src/FsLib/*.cpp) $(wildcard $(TEENSY_LIBS)/SdFat/src/SdCard/*.cpp) $(wildcard $(TEENSY_LIBS)/SdFat/src/iostream/*.cpp) $(wildcard $(TEENSY_LIBS)/SdFat/src/SpiDriver/*.cpp)
 
 CORE_CPP_SOURCES = $(wildcard $(TEENSY4_CORE)/*.cpp)
 CORE_C_SOURCES = $(wildcard $(TEENSY4_CORE)/*.c)
-LIB_SOURCES = $(FASTLED_SOURCES) $(SPI_SOURCES) $(OCTOWS2811_SOURCES)
+LIB_SOURCES = $(FASTLED_SOURCES) $(SPI_SOURCES) $(OCTOWS2811_SOURCES) $(SD_SOURCES) $(SDFAT_SOURCES)
 NON_HARDWARE_SOURCES_NON_FILTERED = $(wildcard core/*.cpp) $(wildcard core/**/**/*.cpp) $(wildcard core/**/*.cpp) $(wildcard common/*.cpp) $(wildcard common/**/*.cpp) $(wildcard common/**/**/*.cpp)
 TEST_CPP = $(wildcard core/test/*.cpp) $(wildcard core/**/test/*.cpp) $(CATCH2_PATH)/extras/catch_amalgamated.cpp
 TEST_SOURCES = $(NON_HARDWARE_SOURCES) $(TEST_CPP)

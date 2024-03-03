@@ -90,4 +90,16 @@ struct Color
     }
 };
 
+namespace colors
+{
+    const Color RED = Color{1.0f, 0.0f, 0.0f};
+    const Color GREEN = Color{0.0f, 1.0f, 0.0f};
+    const Color BLUE = Color{0.0f, 0.0f, 1.0f};
+    const Color WHITE = Color{1.0f, 1.0f, 1.0f};
+    const Color BLACK = Color{0.0f, 0.0f, 0.0f};
+    const Color YELLOW = Color{1.0f, 1.0f, 0.0f};
+    const Color CYAN = Color{0.0f, 1.0f, 1.0f};
+    const Color MAGENTA = Color{1.0f, 0.0f, 1.0f};
+}
+
 }

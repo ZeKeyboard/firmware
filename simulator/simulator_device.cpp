@@ -3,6 +3,7 @@
 #include <mutex>
 #include <thread>
 #include <iostream>
+#include <fstream>
 
 namespace simulator
 {
@@ -117,7 +118,42 @@ void SimulatorDevice::set_keyboard_media(const uint16_t media)
 {
     this->current_media = media;
 }
+
 void SimulatorDevice::keyboard_send() { }
+
+
+bool SimulatorDevice::sd_init()
+{
+    return true;
+}
+
+
+bool SimulatorDevice::sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const
+{
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file.is_open())
+    {
+        return false;
+    }
+    num_read_bytes = file.tellg();
+    file.seekg(0, std::ios::beg);
+    buffer = new char[num_read_bytes];
+    file.read(buffer, num_read_bytes);
+    file.close();
+    return true;
+}
+
+bool SimulatorDevice::sd_write(const char* filename, const char* buffer, const uint32_t num_read_bytes)
+{
+    std::ofstream file(filename, std::ios::binary);
+    if (!file.is_open())
+    {
+        return false;
+    }
+    file.write(buffer, num_read_bytes);
+    file.close();
+    return true;
+}
 
 void SimulatorDevice::start_timer()
 {

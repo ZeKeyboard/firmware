@@ -1,9 +1,9 @@
 #pragma once
 
 #include "device.h"
-#include "common/constants.h"
 #include <FastLED.h>
 #include <OctoWS2811.h>
+#include "common/constants.h"
 
 
 class TeensyDevice : public Device
@@ -27,6 +27,9 @@ public:
     virtual void set_keyboard_media(const uint16_t media) override;
     virtual void keyboard_send() override;
 
+    virtual bool sd_init() override;
+    virtual bool sd_read(const char* filename, char*& buffer, uint32_t& numReadBytes) const override;
+    virtual bool sd_write(const char* filename, const char* buffer, const uint32_t numBytes) override;
     virtual uint16_t get_keyboard_leds() override;
 
     virtual void serial_begin(const uint32_t baud) override;

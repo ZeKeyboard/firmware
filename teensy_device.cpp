@@ -2,6 +2,9 @@
 #include "generated/hardware_layout.h"
 #include <Arduino.h>
 #include <usb_keyboard.h>
+#include <utility>
+#include <SD.h>
+
 
 TeensyDevice::TeensyDevice(CRGB* leds) : leds{leds}
 { }
@@ -156,6 +159,37 @@ void TeensyDevice::set_keyboard_media(const uint16_t media)
 void TeensyDevice::keyboard_send()
 {
     Keyboard.send_now();
+}
+
+bool TeensyDevice::sd_init()
+{
+    return SD.begin(BUILTIN_SDCARD);
+}
+
+bool TeensyDevice::sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const
+{
+    File file = SD.open(filename, FILE_READ);
+    if (file)
+    {
+        num_read_bytes = file.size();
+        buffer = new char[num_read_bytes];
+        file.read(buffer, num_read_bytes);
+        file.close();
+        return true;
+    }
+    return false;
+}
+
+bool TeensyDevice::sd_write(const char* filename, const char* buffer, const uint32_t numBytes)
+{
+    File file = SD.open(filename, FILE_WRITE);
+    if (file)
+    {
+        file.write(buffer, numBytes);
+        file.close();
+        return true;
+    }
+    return false;
 }
 
 void TeensyDevice::start_timer()

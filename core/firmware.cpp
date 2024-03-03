@@ -16,8 +16,11 @@ Firmware::Firmware(Device& device) :
 
     backlight{device, schemes, 1}
 {
-    // TODO load from SD card when possible
-    keymap.load_default();
+    const bool success = keymap.load_from_sd_else_default(device);
+    if (!success)
+    {
+        backlight.signal_failure();
+    }
 }
 
 void Firmware::update()

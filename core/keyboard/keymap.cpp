@@ -5,6 +5,10 @@
 namespace core::keyboard
 {
 
+
+const char* KEYMAP_FILENAME = "Configuration.zkb";
+
+
 void KeyReport::add_key(uint16_t key)
 {
     if (util::key_is_valid_standard_key(key))
@@ -211,6 +215,7 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
     }
 }
 
+
 Action* KeyMap::get_action(int layer, int row, int col) const
 {
     const auto action = actions[layer][row][col];
@@ -221,7 +226,8 @@ Action* KeyMap::get_action(int layer, int row, int col) const
     return action;
 }
 
-bool KeyMap::load(const uint16_t* data, int size)
+
+bool KeyMap::deserialize_keymap(const uint16_t* data, int size)
 {
     if (!check_checksum(data, size))
     {
@@ -283,6 +289,27 @@ bool KeyMap::load(const uint16_t* data, int size)
     }
 
     return true;
+}
+
+
+bool KeyMap::load_from_sd_else_default(Device& device)
+{
+    char* buffer;
+    uint32_t num_read_bytes;
+    const bool success = device.sd_read(KEYMAP_FILENAME, buffer, num_read_bytes);
+    if (success)
+    {
+        const uint16_t* data = reinterpret_cast<const uint16_t*>(buffer);
+        const int size = num_read_bytes / 2;
+        const bool success = deserialize_keymap(data, size);
+        delete[] buffer;
+        if (success)
+        {
+            return true;
+        }
+    }
+    load_default();
+    return false;
 }
 
 }

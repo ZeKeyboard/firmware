@@ -14,4 +14,11 @@ T clamp(T value, T min, T max)
     return std::min(std::max(value, min), max);
 }
 
+template<typename T>
+T wrap_around(T value, T min, T max)
+{
+    static_assert(std::is_arithmetic<T>::value, "T must be an arithmetic type");
+    // TODO implement
+}
+
 }

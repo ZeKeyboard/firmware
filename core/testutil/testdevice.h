@@ -29,8 +29,9 @@ public:
     virtual void set_keyboard_media(const uint16_t) { }
     virtual void keyboard_send() { }
 
-    // TODO may need more work
-    // virtual bool sd_read(const char* filename, char* buffer, const uint32_t buffer_size) { }
+    virtual bool sd_init() { return false; }
+    virtual bool sd_read(const char*, char*&, uint32_t&) const { return false; }
+    virtual bool sd_write(const char*, const char*, const uint32_t) { return false; }
 
     virtual uint16_t get_keyboard_leds() { return 0; }
 
