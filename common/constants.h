@@ -20,7 +20,6 @@ const uint8_t COL_PINS[] =
     35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 12, 11, 10, 9, 8, 7, 6
 };
 
-
 const uint8_t ROW_PINS[] =
 {
     5, 4, 3, 2, 1, 0
@@ -30,5 +29,7 @@ const uint16_t CHECKSUM_PERIOD = 65500;
 
 const uint32_t DEFAULT_BLINK_PERIOD = 500;
 const uint32_t DEFAULT_FADE_TIME = 1000;
+
+static const char* KEYMAP_FILENAME = "Configuration.zkb";
 
 }

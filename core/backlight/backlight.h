@@ -19,6 +19,7 @@ public:
     void increment_scheme();
 
     void signal_failure();
+    void signal_success();
 
 private:
     Color update_fade(LEDState& state);

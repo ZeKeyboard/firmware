@@ -31,6 +31,8 @@ public:
     virtual void set_keyboard_media(const uint16_t media) override;
     virtual void keyboard_send() override;
 
+    virtual bool serial_data_available() override { return false; }
+    virtual void serial_read(char*&, uint32_t&) override { }
 
     virtual bool sd_init() override;
     virtual bool sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const override;

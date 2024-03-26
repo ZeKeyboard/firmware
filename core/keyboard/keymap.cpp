@@ -5,10 +5,6 @@
 namespace core::keyboard
 {
 
-
-const char* KEYMAP_FILENAME = "Configuration.zkb";
-
-
 void KeyReport::add_key(uint16_t key)
 {
     if (util::key_is_valid_standard_key(key))
@@ -296,7 +292,8 @@ bool KeyMap::load_from_sd_else_default(Device& device)
 {
     char* buffer;
     uint32_t num_read_bytes;
-    const bool success = device.sd_read(KEYMAP_FILENAME, buffer, num_read_bytes);
+    const bool success = device.sd_read(common::constants::KEYMAP_FILENAME,
+                                        buffer, num_read_bytes);
     if (success)
     {
         const uint16_t* data = reinterpret_cast<const uint16_t*>(buffer);

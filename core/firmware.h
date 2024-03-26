@@ -25,6 +25,8 @@ private:
     keyboard::KeyQueue key_queue;
     keyboard::KeyMap keymap;
 
+    bool loaded_keymap = false;
+
     // Backlight schemes
     backlight::schemes::Wave wave;
 

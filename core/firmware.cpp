@@ -15,16 +15,23 @@ Firmware::Firmware(Device& device) :
     wave{device},
 
     backlight{device, schemes, 1}
-{
-    const bool success = keymap.load_from_sd_else_default(device);
-    if (!success)
-    {
-        backlight.signal_failure();
-    }
-}
+{ }
 
 void Firmware::update()
 {
+    if (!loaded_keymap)
+    {
+        const bool success = keymap.load_from_sd_else_default(device);
+        if (success)
+        {
+            backlight.signal_success();
+        }
+        else
+        {
+            backlight.signal_failure();
+        }
+        loaded_keymap = true;
+    }
     device.start_timer();
     keyboard::KeyboardScanResult result;
     key_scanner.scan(result);
@@ -36,6 +43,24 @@ void Firmware::update()
     if (elapsed < CYCLE_TIME_MICROS)
     {
         device.sleep_micros(CYCLE_TIME_MICROS - elapsed);
+    }
+
+    // stty 9600 -F /dev/ttyACM0
+    if (device.serial_data_available())
+    {
+        char* buffer;
+        uint32_t num_read_bytes;
+        device.serial_read(buffer, num_read_bytes);
+        const bool success = device.sd_write(common::constants::KEYMAP_FILENAME, buffer, num_read_bytes);
+        delete[] buffer;
+        if (success)
+        {
+            backlight.signal_success();
+        }
+        else
+        {
+            backlight.signal_failure();
+        }
     }
 }
 

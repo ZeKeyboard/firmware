@@ -27,9 +27,12 @@ public:
     virtual void set_keyboard_media(const uint16_t media) override;
     virtual void keyboard_send() override;
 
+    virtual bool serial_data_available() override;
+    virtual void serial_read(char*& buffer, uint32_t& num_read_bytes) override;
+
     virtual bool sd_init() override;
-    virtual bool sd_read(const char* filename, char*& buffer, uint32_t& numReadBytes) const override;
-    virtual bool sd_write(const char* filename, const char* buffer, const uint32_t numBytes) override;
+    virtual bool sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const override;
+    virtual bool sd_write(const char* filename, const char* buffer, const uint32_t num_bytes) override;
     virtual uint16_t get_keyboard_leds() override;
 
     virtual void serial_begin(const uint32_t baud) override;

@@ -40,6 +40,21 @@ public:
     virtual void keyboard_send() = 0;
 
     /**
+     * Check if there is data available to read from the serial port.
+     * 
+     * @return true if there is data available to read, false otherwise.
+     */
+    virtual bool serial_data_available() = 0;
+
+    /**
+     * Read data from the serial port.
+     * 
+     * @param buffer A pointer to a buffer that will be allocated and filled with the data read from the serial port. Remember to delete[] this buffer when you're done with it.
+     * @param num_read_bytes The number of bytes read from the serial port.
+     */
+    virtual void serial_read(char*& buffer, uint32_t& num_read_bytes) = 0;
+
+    /**
      * Initialize the SD card.
      * 
      * @return true if the SD card was initialized successfully, false otherwise.

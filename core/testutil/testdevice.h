@@ -29,6 +29,9 @@ public:
     virtual void set_keyboard_media(const uint16_t) { }
     virtual void keyboard_send() { }
 
+    virtual bool serial_data_available() { return false; }
+    virtual void serial_read(char*&, uint32_t&) { }
+
     virtual bool sd_init() { return false; }
     virtual bool sd_read(const char*, char*&, uint32_t&) const { return false; }
     virtual bool sd_write(const char*, const char*, const uint32_t) { return false; }

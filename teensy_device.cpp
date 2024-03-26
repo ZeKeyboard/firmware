@@ -49,71 +49,85 @@ void TeensyDevice::serial_begin(const uint32_t baud)
 void TeensyDevice::serial_print(const char* str)
 {
     Serial.print(str);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_print(uint8_t val)
 {
     Serial.print(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_print(uint16_t val)
 {
     Serial.print(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_print(uint32_t val)
 {
     Serial.print(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_print(int8_t val)
 {
     Serial.print(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_print(int16_t val)
 {
     Serial.print(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_print(int32_t val)
 {
     Serial.print(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_println(const char* str)
 {
     Serial.println(str);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_println(uint8_t val)
 {
     Serial.println(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_println(uint16_t val)
 {
     Serial.println(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_println(uint32_t val)
 {
     Serial.println(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_println(int8_t val)
 {
     Serial.println(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_println(int16_t val)
 {
     Serial.println(val);
+    Serial.flush();
 }
 
 void TeensyDevice::serial_println(int32_t val)
 {
     Serial.println(val);
+    Serial.flush();
 }
 
 void TeensyDevice::set_keyboard_key1(const uint8_t code)
@@ -161,6 +175,20 @@ void TeensyDevice::keyboard_send()
     Keyboard.send_now();
 }
 
+bool TeensyDevice::serial_data_available()
+{
+    return Serial.available() > 0;
+}
+
+void TeensyDevice::serial_read(char*& buffer, uint32_t& num_read_bytes)
+{
+    num_read_bytes = Serial.available();
+    serial_print("num_read_bytes: ");
+    serial_println(num_read_bytes);
+    buffer = new char[num_read_bytes];
+    Serial.readBytes(buffer, num_read_bytes);
+}
+
 bool TeensyDevice::sd_init()
 {
     return SD.begin(BUILTIN_SDCARD);
@@ -180,12 +208,20 @@ bool TeensyDevice::sd_read(const char* filename, char*& buffer, uint32_t& num_re
     return false;
 }
 
-bool TeensyDevice::sd_write(const char* filename, const char* buffer, const uint32_t numBytes)
+bool TeensyDevice::sd_write(const char* filename, const char* buffer, const uint32_t num_bytes)
 {
+    if (SD.exists(filename))
+    {
+        const bool removed = SD.remove(filename);
+        if (!removed)
+        {
+            return false;
+        }
+    }
     File file = SD.open(filename, FILE_WRITE);
     if (file)
     {
-        file.write(buffer, numBytes);
+        file.write(buffer, num_bytes);
         file.close();
         return true;
     }

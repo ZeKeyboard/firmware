@@ -16,6 +16,7 @@ core::Firmware firmware{device};
 
 void setup()
 {
+    device.sd_init();
     octo.begin();
     pcontroller = new CTeensy4Controller<GRB, WS2811_800kHz>(&octo);
     FastLED.setBrightness(255);
@@ -25,6 +26,7 @@ void setup()
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 900);
     delay(50);
     FastLED.show();
+    device.serial_begin(9600);
 }
 
 void loop()
