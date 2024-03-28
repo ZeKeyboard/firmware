@@ -6499,5 +6499,22 @@
     "directory": "/home/malcolm/Programming/ZeKeyboard/firmware",
     "file": "/home/malcolm/.arduino15/packages/teensy/hardware/avr/1.58.1/cores/teensy4/usb_touch.c",
     "output": "/home/malcolm/Programming/ZeKeyboard/firmware/build/core/home/malcolm/.arduino15/packages/teensy/hardware/avr/1.58.1/cores/teensy4/usb_touch.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-std=gnu++23",
+      "-I/usr/include/SFML",
+      "-o",
+      "obj/simulator.o",
+      "simulator.cpp"
+    ],
+    "directory": "/home/malcolm/Programming/ZeKeyboard/firmware/simulator",
+    "file": "/home/malcolm/Programming/ZeKeyboard/firmware/simulator/simulator.cpp",
+    "output": "/home/malcolm/Programming/ZeKeyboard/firmware/simulator/obj/simulator.o"
   }
 ]
