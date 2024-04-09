@@ -1,5 +1,6 @@
 #include "keymap.h"
 #include "keyutils.h"
+#include "../util/buffer_utils.h"
 
 
 namespace core::keyboard
@@ -7,12 +8,10 @@ namespace core::keyboard
 
 void KeyReport::add_key(uint16_t key)
 {
-    if (util::key_is_valid_standard_key(key))
+    if (util::key_is_valid_standard_key(key)
+        && num_keys < common::constants::MAX_KEYREPORT_KEYS)
     {
-        if (num_keys < common::constants::MAX_KEYREPORT_KEYS)
-        {
-            keys[num_keys++] = key;
-        }
+        keys[num_keys++] = key;
     }
     else if (util::key_is_valid_modifier(key))
     {
@@ -290,10 +289,16 @@ bool KeyMap::deserialize_keymap(const uint16_t* data, int size)
 
 bool KeyMap::load_from_sd_else_default(Device& device)
 {
-    char* buffer;
-    uint32_t num_read_bytes;
+    char* ascii_buffer;
+    uint32_t num_read_ascii_chars;
     const bool success = device.sd_read(common::constants::KEYMAP_FILENAME,
-                                        buffer, num_read_bytes);
+                                        ascii_buffer, num_read_ascii_chars);
+
+    char* buffer;
+    int num_read_bytes;
+    core::util::ascii_buffer_to_hex_buffer(
+        ascii_buffer, buffer, num_read_ascii_chars, num_read_bytes);
+
     if (success)
     {
         const uint16_t* data = reinterpret_cast<const uint16_t*>(buffer);

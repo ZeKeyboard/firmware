@@ -48,11 +48,16 @@ void Firmware::update()
     // stty 9600 -F /dev/ttyACM0
     if (device.serial_data_available())
     {
-        char* buffer;
+        char* ascii_buffer;
         uint32_t num_read_bytes;
-        device.serial_read(buffer, num_read_bytes);
-        const bool success = device.sd_write(common::constants::KEYMAP_FILENAME, buffer, num_read_bytes);
-        delete[] buffer;
+        device.serial_read(ascii_buffer, num_read_bytes);
+
+        const bool success = device.sd_write(
+            common::constants::KEYMAP_FILENAME,
+            ascii_buffer,
+            num_read_bytes);
+
+        delete[] ascii_buffer;
         if (success)
         {
             backlight.signal_success();

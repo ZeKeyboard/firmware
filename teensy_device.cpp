@@ -183,8 +183,6 @@ bool TeensyDevice::serial_data_available()
 void TeensyDevice::serial_read(char*& buffer, uint32_t& num_read_bytes)
 {
     num_read_bytes = Serial.available();
-    serial_print("num_read_bytes: ");
-    serial_println(num_read_bytes);
     buffer = new char[num_read_bytes];
     Serial.readBytes(buffer, num_read_bytes);
 }
