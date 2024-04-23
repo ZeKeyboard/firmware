@@ -7,7 +7,9 @@ TEENSY_HARDWARE = $(TEENSY_DIR)/hardware
 CATCH2_PATH = submodules/Catch2
 CATCH2_INCLUDE = -I$(CATCH2_PATH)/extras
 
-LIBRARIES_VERSION = 1.58.1
+LIBRARIES_VERSION = 1.59.0
+TEENSYDUINO_VERSION_FLAG = 159
+
 TEENSY_AVR = $(TEENSY_HARDWARE)/avr/$(LIBRARIES_VERSION)
 TEENSY_LIBS = $(TEENSY_AVR)/libraries
 TEENSY4_CORE = $(TEENSY_AVR)/cores/teensy4
@@ -22,25 +24,25 @@ CXX = $(TEENSY_COMPILE)/arm-none-eabi-g++
 CC = $(TEENSY_COMPILE)/arm-none-eabi-gcc
 AR = $(TEENSY_COMPILE)/arm-none-eabi-gcc-ar
 SIZE = $(TEENSY_COMPILE)/arm-none-eabi-size
-PRECOMPILE_HELPER = $(TEENSY_TOOLS)/teensy-tools/1.58.0/precompile_helper
+PRECOMPILE_HELPER = $(TEENSY_TOOLS)/teensy-tools/$(LIBRARIES_VERSION)/precompile_helper
 OBJCOPY = $(TEENSY_COMPILE)/arm-none-eabi-objcopy
-POST_COMPILE = $(TEENSY_TOOLS)/teensy-tools/1.58.0/teensy_post_compile
+POST_COMPILE = $(TEENSY_TOOLS)/teensy-tools/$(LIBRARIES_VERSION)/teensy_post_compile
 PYTHON = python3
 GENERATE_LAYOUT = submodules/scripts/generate_layout.py
 
 KEYBOARD_LAYOUT_JSON = submodules/scripts/resources/keyboard-layout.json
 EXTRA_LEDS_JSON = submodules/scripts/resources/extra_leds.json
 
-PRECOMPILE_FLAGS = -x c++-header -O2 -g -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -std=gnu++17 -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=158 -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH -I$(TEENSY4_CORE)
+PRECOMPILE_FLAGS = -x c++-header -O2 -g -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -std=gnu++17 -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=$(TEENSYDUINO_VERSION_FLAG) -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH -I$(TEENSY4_CORE)
 
-LINK_FLAGS = -O2 -Wl,--gc-sections,--relax -T$(TEENSY_HARDWARE)/avr/1.58.1/cores/teensy4/imxrt1062_t41.ld -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16
+LINK_FLAGS = -O2 -Wl,--gc-sections,--relax -T$(TEENSY_HARDWARE)/avr/$(LIBRARIES_VERSION)/cores/teensy4/imxrt1062_t41.ld -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16
 
-CXX_14 = -std=gnu++14
+CXX_17 = -std=gnu++17
 CORE_CXX_VERSION = -std=gnu++23
 
-CXX_FLAGS = -c -O2 -g -Wall -Wextra -ffunction-sections -fdata-sections -nostdlib -MMD -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=158 -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
+CXX_FLAGS = -c -O2 -g -Wall -Wextra -ffunction-sections -fdata-sections -nostdlib -MMD -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=$(TEENSYDUINO_VERSION_FLAG) -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
 
-CC_FLAGS = -c -O2 -g -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=158 -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
+CC_FLAGS = -c -O2 -g -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -D__IMXRT1062__ -DTEENSYDUINO=$(TEENSYDUINO_VERSION_FLAG) -DARDUINO=10607 -DARDUINO_TEENSY41 -DF_CPU=600000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
 
 OBJCOPY_FLAGS = -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0
 
@@ -88,7 +90,7 @@ build/pch/Arduino.h.gch:
 
 build/core/%.cpp.o: %.cpp $(CORE_HEADERS)
 	mkdir -p $(@D)
-	$(CXX) $(CXX_FLAGS) $(CXX_14) $(INCLUDE_LIBS) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_17) $(INCLUDE_LIBS) -c $< -o $@
 
 build/core/%.c.o: %.c $(CORE_HEADERS)
 	mkdir -p $(@D)
@@ -101,7 +103,7 @@ build/core/core.a: $(CORE_CPP_TARGETS) $(CORE_C_TARGETS)
 
 build/libraries/%.o: %.cpp $(LIB_HEADERS) build/pch/Arduino.h.gch
 	mkdir -p $(@D)
-	$(CXX) $(CXX_FLAGS) $(CXX_14) $(INCLUDE_LIBS) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_17) $(INCLUDE_LIBS) -c $< -o $@
 
 build/%.o: %.cpp $(HEADERS) build/pch/Arduino.h.gch generated/hardware_layout.h
 	mkdir -p $(@D)
