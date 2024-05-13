@@ -55,6 +55,12 @@ private:
      * Updates the current layer based on whether the scan result contains a toggle layer key.
      */
     void update_current_layer(const KeyboardScanResult& scan_result);
+
+    /**
+     * Extracts the key from the action and adds it to the key report.
+     * Returns true if the action is a single key press.
+     */
+    bool extract_single_key(const Action* action, KeyReport& single_key_report);
 };
 
 }

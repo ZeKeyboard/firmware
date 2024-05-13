@@ -24,6 +24,7 @@ private:
     keyboard::KeyScanner key_scanner;
     keyboard::KeyQueue key_queue;
     keyboard::KeyMap keymap;
+    keyboard::KeyboardScanResult keyboard_scan_result;
 
     bool loaded_keymap = false;
 

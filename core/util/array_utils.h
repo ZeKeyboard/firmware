@@ -83,7 +83,6 @@ void array_subtract(const T a[], int a_size, const T b[], int b_size, T result[]
             result[result_size++] = a[i];
         }
     }
-
 }
 
 }

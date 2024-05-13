@@ -33,11 +33,10 @@ void Firmware::update()
         loaded_keymap = true;
     }
     device.start_timer();
-    keyboard::KeyboardScanResult result;
-    key_scanner.scan(result);
-    keymap.translate_keyboard_scan_result(result, key_queue);
+    key_scanner.scan(keyboard_scan_result);
+    keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue);
     keyboard::communication::send_key_report(key_queue, device);
-    backlight.update(result);
+    backlight.update(keyboard_scan_result);
 
     const uint32_t elapsed = device.get_timer_micros();
     if (elapsed < CYCLE_TIME_MICROS)

@@ -8,7 +8,7 @@ namespace core::keyboard::util
 {
 
 /**
- * This array is used to check if a keycode is valid.
+ * This array is used to check if a standard keycode is valid.
  */
 const bool IS_KEYCODE_VALID[116]
 {
@@ -181,6 +181,26 @@ inline bool key_is_layer_toggle_modifier(uint16_t key)
         return false;
     }
     return get_layer_modifier_layer(key) < common::constants::MAX_NUM_LAYERS;
+}
+
+inline bool key_is_mouse_key(uint16_t key)
+{
+    return (key & 0xFF00) == common::constants::MOUSE_BASE_CODE;
+}
+
+inline bool key_is_control_key(uint16_t key)
+{
+    return (key & 0xFF00) == common::constants::CONTROL_BASE_CODE;
+}
+
+inline bool key_is_valid_non_modifier_and_non_media(uint16_t key)
+{
+    return
+        key_is_valid_standard_key(key) ||
+        key_is_layer_toggle_modifier(key) ||
+        key_is_layer_hold_modifier(key) ||
+        key_is_mouse_key(key) ||
+        key_is_control_key(key);
 }
 
 }

@@ -473,6 +473,8 @@ TEST_CASE("Test translate scan result", "[KeyMap]")
         core::keyboard::KeyboardScanResult scan_result;
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[1];
+        scan_result.num_just_pressed = 1;
+        scan_result.just_pressed[0] = &descriptions[1];
 
         keymap.translate_keyboard_scan_result(scan_result, queue);
 

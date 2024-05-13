@@ -1,4 +1,5 @@
 #include "simulator_device.h"
+#include "keycodes.h"
 #include <chrono>
 #include <mutex>
 #include <thread>
@@ -54,7 +55,6 @@ void SimulatorDevice::gpio_setup(const uint8_t pin, const PinMode mode)
 void SimulatorDevice::gpio_write(const uint8_t pin, const PinState value)
 {
     std::lock_guard<std::mutex> lock(mutex);
-    std::cout << "SimulatorDevice::gpio_write(" << (int)pin << ", " << (int)value << ")" << std::endl;
     if (pin_to_row.count(pin))
     {
         row_state[pin_to_row[pin]] = (bool)value;
@@ -119,7 +119,23 @@ void SimulatorDevice::set_keyboard_media(const uint16_t media)
     this->current_media = media;
 }
 
-void SimulatorDevice::keyboard_send() { }
+void SimulatorDevice::keyboard_send()
+{
+    bool any_keys_pressed = false;
+    for (int i = 0; i < 6; i++)
+    {
+        if (current_keys[i] != 0)
+        {
+            any_keys_pressed = true;
+            const auto full_code = 0xF000 | current_keys[i];
+            std::cout << "Key: " << KEY_CODES.at(full_code);
+        }
+    }
+    if (any_keys_pressed)
+    {
+        std::cout << std::endl;
+    }
+}
 
 
 bool SimulatorDevice::sd_init()

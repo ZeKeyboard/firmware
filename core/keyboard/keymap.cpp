@@ -144,6 +144,28 @@ void KeyMap::update_current_layer(const KeyboardScanResult& scan_result)
 }
 
 
+bool KeyMap::extract_single_key(const Action* action, KeyReport& single_key_report)
+{
+    if (action->is_single_key())
+    {
+        const auto code = action->sequence[0].key;
+        if (util::key_is_valid_standard_key(code))
+        {
+            // this check is necessary since the key might be a layer modifier
+            single_key_report.add_key(code);
+        }
+
+        const auto modifier = action->sequence[0].modifier;
+        single_key_report.add_key(modifier);
+
+        const auto media = action->sequence[0].media;
+        single_key_report.add_key(media);
+        return true;
+    }
+    return false;
+}
+
+
 void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue)
 {
     /*
@@ -170,40 +192,39 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
         const auto action = get_action(layer_to_use, key->row, key->col);
         if (action != nullptr)
         {
-            if (action->is_single_key())
+            single_key_pressed |= extract_single_key(action, single_key_report);
+        }
+    }
+
+
+    // handle sequences, these should start only once
+    for (int i = 0; i < scan_result.num_just_pressed; ++i)
+    {
+        const auto key = scan_result.just_pressed[i];
+        const auto action = get_action(layer_to_use, key->row, key->col);
+        if (action != nullptr && !action->is_single_key())
+        {
+            for (int j = 0; j < action->sequence_length; ++j)
             {
-                const auto code = action->sequence[0].key;
-                if (util::key_is_valid_standard_key(code))
-                {
-                    // this check is necessary since the key might be a layer modifier
-                    single_key_report.add_key(code);
-                }
+                KeyReport report;
+                const auto code = action->sequence[j].key;
+                report.add_key(code);
 
-                const auto modifier = action->sequence[0].modifier;
-                single_key_report.add_key(modifier);
+                const auto modifier = action->sequence[j].modifier;
+                report.add_key(modifier);
 
-                const auto media = action->sequence[0].media;
-                single_key_report.add_key(media);
-                single_key_pressed = true;
-            }
-            else
-            {
-                for (int j = 0; j < action->sequence_length; ++j)
-                {
-                    KeyReport report;
-                    const auto code = action->sequence[j].key;
-                    report.add_key(code);
+                const auto media = action->sequence[j].media;
+                report.add_key(media);
+                key_queue.push(report);
 
-                    const auto modifier = action->sequence[j].modifier;
-                    report.add_key(modifier);
-
-                    const auto media = action->sequence[j].media;
-                    report.add_key(media);
-                    key_queue.push(report);
-                }
+                // Add an empty report between each key, to ensure that the computer
+                // interprets them as separate keypresses. Otherwise double letters will
+                // be interpreted as a single letters.
+                key_queue.push({});
             }
         }
     }
+
     if (single_key_pressed && single_key_report.num_keys > 0)
     {
         key_queue.push(single_key_report);
@@ -258,9 +279,7 @@ bool KeyMap::deserialize_keymap(const uint16_t* data, int size)
         for (int j = 0; j < sequence_length; ++j)
         {
             const uint16_t key = data[i++];
-            if (!util::key_is_valid_standard_key(key)
-                && !util::key_is_layer_hold_modifier(key)
-                && !util::key_is_layer_toggle_modifier(key))
+            if (!util::key_is_valid_non_modifier_and_non_media(key))
             {
                 return false;
             }

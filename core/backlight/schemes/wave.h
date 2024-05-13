@@ -8,7 +8,7 @@
 namespace core::backlight::schemes
 {
 
-const float SPEED = 0.0005f;
+const float SPEED = 0.005f;
 const float X_SPEED = 0.8f;
 const float Y_SPEED = 1.1f;
 const float MAX_PHASE_DIFFERENCE = 0.3f;
