@@ -160,9 +160,14 @@ inline bool key_is_system_key(uint16_t key)
     return (key & 0xFF00) == 0xE200;
 }
 
-inline uint8_t get_layer_modifier_layer(uint16_t key)
+inline uint8_t get_layer_hold_modifier_layer(uint16_t key)
 {
-    return key & 0x000F;
+    return (key & 0x00FF) - 129;
+}
+
+inline uint8_t get_layer_toggle_modifier_layer(uint16_t key)
+{
+    return (key & 0x00FF) - 131;
 }
 
 inline bool key_is_layer_hold_modifier(uint16_t key)
@@ -171,7 +176,7 @@ inline bool key_is_layer_hold_modifier(uint16_t key)
     {
         return false;
     }
-    return get_layer_modifier_layer(key) < common::constants::MAX_NUM_LAYERS;
+    return get_layer_hold_modifier_layer(key) < common::constants::MAX_NUM_LAYERS;
 }
 
 inline bool key_is_layer_toggle_modifier(uint16_t key)
@@ -180,7 +185,7 @@ inline bool key_is_layer_toggle_modifier(uint16_t key)
     {
         return false;
     }
-    return get_layer_modifier_layer(key) < common::constants::MAX_NUM_LAYERS;
+    return get_layer_toggle_modifier_layer(key) < common::constants::MAX_NUM_LAYERS;
 }
 
 inline bool key_is_mouse_key(uint16_t key)

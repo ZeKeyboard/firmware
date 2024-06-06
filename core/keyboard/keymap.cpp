@@ -117,7 +117,7 @@ int KeyMap::get_hold_layer(const KeyboardScanResult& scan_result) const
             const auto code = action->sequence[0].key;
             if (util::key_is_layer_hold_modifier(code))
             {
-                return util::get_layer_modifier_layer(code);
+                return util::get_layer_hold_modifier_layer(code);
             }
         }
     }
@@ -136,7 +136,7 @@ void KeyMap::update_current_layer(const KeyboardScanResult& scan_result)
             const auto code = action->sequence[0].key;
             if (util::key_is_layer_toggle_modifier(code))
             {
-                const auto layer = util::get_layer_modifier_layer(code);
+                const auto layer = util::get_layer_toggle_modifier_layer(code);
                 current_layer = current_layer == layer ? 0 : layer;
             }
         }
