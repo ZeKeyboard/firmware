@@ -53,6 +53,11 @@ public:
     virtual void serial_println(int16_t val) override;
     virtual void serial_println(int32_t val) override;
 
+    virtual void mouse_init() override;
+    virtual void mouse_move(int8_t dx, int8_t dy, int8_t wheel) override;
+    virtual void mouse_press(DeviceMouseButton button) override;
+    virtual void mouse_release(DeviceMouseButton button) override;
+
     virtual void start_timer() override;
     virtual uint32_t get_timer_micros() override;
     virtual uint32_t milliseconds_since_start() const override;

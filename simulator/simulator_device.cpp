@@ -197,4 +197,19 @@ uint32_t SimulatorDevice::milliseconds_since_start() const
     return std::chrono::high_resolution_clock::now().time_since_epoch().count() / 1000000;
 }
 
+void SimulatorDevice::mouse_move(int8_t dx, int8_t dy, int8_t wheel)
+{
+    std::cout << "SimulatorDevice::mouse_move(" << (int)dx << ", " << (int)dy << ", " << (int)wheel << ")" << std::endl;
+}
+
+void SimulatorDevice::mouse_press(DeviceMouseButton button)
+{
+    std::cout << "SimulatorDevice::mouse_press(" << (int)button << ")" << std::endl;
+}
+
+void SimulatorDevice::mouse_release(DeviceMouseButton button)
+{
+    std::cout << "SimulatorDevice::mouse_release(" << (int)button << ")" << std::endl;
+}
+
 }

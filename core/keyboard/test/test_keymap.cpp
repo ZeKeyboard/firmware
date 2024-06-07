@@ -1,4 +1,5 @@
 #include "../keymap.h"
+#include "../keymap_loader.h"
 #include <catch_amalgamated.hpp>
 
 
@@ -217,7 +218,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         const uint16_t cols[] = {0, 3, 3};
 
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]), keymap);
         REQUIRE(success);
 
         for (unsigned l = 0; l < common::constants::MAX_NUM_LAYERS; ++l)
@@ -290,23 +291,23 @@ TEST_CASE("Test keymap load", "[KeyMap]")
     SECTION("Test invalid checksum")
     {
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(invalid_checksum,
-            sizeof(invalid_checksum) / sizeof(invalid_checksum[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(invalid_checksum,
+            sizeof(invalid_checksum) / sizeof(invalid_checksum[0]), keymap);
         REQUIRE(!success);
     }
 
     SECTION("Test invalid sequence lengths")
     {
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(invalid_sequence_lengths,
-            sizeof(invalid_sequence_lengths) / sizeof(invalid_sequence_lengths[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(invalid_sequence_lengths,
+            sizeof(invalid_sequence_lengths) / sizeof(invalid_sequence_lengths[0]), keymap);
         REQUIRE(!success);
     }
     SECTION("Test invalid keycodes")
     {
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(invalid_keycodes,
-            sizeof(invalid_keycodes) / sizeof(invalid_keycodes[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(invalid_keycodes,
+            sizeof(invalid_keycodes) / sizeof(invalid_keycodes[0]), keymap);
         REQUIRE(!success);
     }
 }
@@ -314,7 +315,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
 TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
 {
     core::keyboard::KeyMap keymap;
-    const auto success = keymap.deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
+    const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]), keymap);
     REQUIRE(success);
 
     const common::KeyDescription descriptions[]
@@ -328,9 +329,10 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
     {
         core::keyboard::KeyQueue queue;
         core::keyboard::KeyboardScanResult scan_result;
+        core::keyboard::MouseState mouse_state;
         scan_result.num_pressed = 0;
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
 
         REQUIRE(queue.size() == 0);
     }
@@ -339,11 +341,12 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
     {
         core::keyboard::KeyQueue queue;
         core::keyboard::KeyboardScanResult scan_result;
+        core::keyboard::MouseState mouse_state;
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[0];
 
         keymap.current_layer = 1;
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
 
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
@@ -357,10 +360,11 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
     {
         core::keyboard::KeyQueue queue;
         core::keyboard::KeyboardScanResult scan_result;
+        core::keyboard::MouseState mouse_state;
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[0];
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
 
         REQUIRE(queue.size() == 0);
     }
@@ -441,11 +445,12 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         };
 
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(data, sizeof(data) / sizeof(data[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(data, sizeof(data) / sizeof(data[0]), keymap);
         REQUIRE(success);
 
         core::keyboard::KeyQueue queue;
         core::keyboard::KeyboardScanResult scan_result;
+        core::keyboard::MouseState mouse_state;
         scan_result.num_pressed = 7;
 
         for (int i = 0; i < 7; ++i)
@@ -453,7 +458,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
             scan_result.pressed[i] = &descriptions[i];
         }
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
 
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 6);
@@ -471,12 +476,13 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
     {
         core::keyboard::KeyQueue queue;
         core::keyboard::KeyboardScanResult scan_result;
+        core::keyboard::MouseState mouse_state;
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[1];
         scan_result.num_just_pressed = 1;
         scan_result.just_pressed[0] = &descriptions[1];
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
 
         // TODO: This test is currently failing due to the addition of blank keys in sequences.
         // We should not always add blank keys due to memory constraints, rather only when we
@@ -570,16 +576,17 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         };
 
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(data, sizeof(data) / sizeof(data[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(data, sizeof(data) / sizeof(data[0]), keymap);
         REQUIRE(success);
 
         core::keyboard::KeyQueue queue;
         core::keyboard::KeyboardScanResult scan_result;
+        core::keyboard::MouseState mouse_state;
         scan_result.num_pressed = 2;
         scan_result.pressed[0] = &descriptions[0];  // hold layer 1
         scan_result.pressed[1] = &descriptions[3];  // key on layer 1
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
 
@@ -591,7 +598,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.pressed[0] = &descriptions[0];  // hold layer 1
         scan_result.pressed[1] = &descriptions[5];  // key which does not have anything on layer 1
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 0);  // nothing should be registered since we have fallback turned off
 
         queue.pop();
@@ -600,7 +607,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[3];
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (8 | 0xF000));
@@ -612,7 +619,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.pressed[0] = &descriptions[2];  // toggle layer 2
         scan_result.pressed[1] = &descriptions[3];  // key on layer 2
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (7 | 0xF000));
@@ -624,7 +631,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[3];  // key on layer 2
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (7 | 0xF000));
@@ -636,13 +643,13 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[2];  // toggle layer 2
 
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 0);
 
         // layer 2 should no longer be active
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[3];  // key on layer 2 but also layer 0
-        keymap.translate_keyboard_scan_result(scan_result, queue);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (8 | 0xF000));

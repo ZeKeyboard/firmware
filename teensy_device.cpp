@@ -257,3 +257,27 @@ void TeensyDevice::update_leds()
 {
     FastLED.show();
 }
+
+void TeensyDevice::mouse_init()
+{
+    Mouse.begin();
+}
+
+
+void TeensyDevice::mouse_move(int8_t dx, int8_t dy, int8_t wheel)
+{
+    Mouse.move(dx, dy, wheel);
+}
+
+
+void TeensyDevice::mouse_press(DeviceMouseButton button)
+{
+    Mouse.press(static_cast<uint8_t>(button));
+}
+
+
+void TeensyDevice::mouse_release(DeviceMouseButton button)
+{
+    Mouse.release(static_cast<uint8_t>(button));
+}
+

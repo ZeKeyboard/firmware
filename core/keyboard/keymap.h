@@ -3,6 +3,7 @@
 #include "../../common/constants.h"
 #include "keyscan.h"
 #include "action.h"
+#include "mouse.h"
 
 
 namespace core::keyboard
@@ -20,10 +21,14 @@ struct KeyReport
 
 typedef util::FixedSizeQueue<KeyReport, common::constants::MAX_QUEUED_KEY_EVENTS> KeyQueue;
 
+
 class KeyMap
 {
+    friend class KeyMapLoader;
+
 public:
-    void translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue);
+    void translate_keyboard_scan_result(
+        const KeyboardScanResult& scan_result, KeyQueue& key_queue, MouseState& mouse);
 
     /**
      * Returns the action at the given layer, row, and column.
@@ -35,9 +40,6 @@ public:
 
     int current_layer = 0;
 
-    bool load_from_sd_else_default(Device& device);
-    bool deserialize_keymap(const uint16_t* data, int size);
-
 private:
 
     void load_default();
@@ -46,8 +48,6 @@ private:
     bool layer_fallback = false;
 
     Action* actions[common::constants::MAX_NUM_LAYERS][common::constants::NUM_ROWS][common::constants::NUM_COLS];
-    bool check_checksum(const uint16_t* data, int size) const;
-    bool check_sequence_lengths(const uint16_t* data, int size) const;
 
     int get_hold_layer(const KeyboardScanResult& scan_result) const;
 
@@ -60,7 +60,13 @@ private:
      * Extracts the key from the action and adds it to the key report.
      * Returns true if the action is a single key press.
      */
-    bool extract_single_key(const Action* action, KeyReport& single_key_report);
+    bool extract_single_key(const Action* action, KeyReport& single_key_report) const;
+
+    /**
+     * Reads the mouse keys from the scan result and updates the mouse state.
+     */
+    void read_mouse_keys(const KeyboardScanResult& scan_result, MouseState& mouse) const;
+
 };
 
 }

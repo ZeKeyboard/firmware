@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <stdint.h>
 
 
@@ -19,6 +18,15 @@ enum class PinState
     LEVEL_LOW = 0,
     LEVEL_HIGH = 1,
 };
+
+
+enum class DeviceMouseButton
+{
+    LEFT = 0,
+    RIGHT = 1,
+    MIDDLE = 2,
+};
+
 
 class Device
 {
@@ -76,7 +84,7 @@ public:
      * @param filename The name of the file to write to.
      * @param buffer A pointer to the buffer containing the data to write.
      * @param num_bytes The number of bytes to write to the file.
-     * 
+     *
      * @return true if the file was written successfully, false otherwise.
      */
     virtual bool sd_write(const char* filename, const char* buffer, const uint32_t num_bytes) = 0;
@@ -103,6 +111,11 @@ public:
 
     virtual void start_timer() = 0;
     virtual uint32_t get_timer_micros() = 0;
+
+    virtual void mouse_init() = 0;
+    virtual void mouse_move(int8_t dx, int8_t dy, int8_t wheel) = 0;
+    virtual void mouse_press(DeviceMouseButton button) = 0;
+    virtual void mouse_release(DeviceMouseButton button) = 0;
 
     /**
      * Milliseconds since the device was started.

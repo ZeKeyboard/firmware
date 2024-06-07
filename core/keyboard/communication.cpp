@@ -1,7 +1,43 @@
 #include "communication.h"
+#include <utility>
 
 namespace core::keyboard::communication
 {
+
+void send_mouse_commands(MouseState& mouse_state, Device& device)
+{
+    const auto movement = mouse_state.get_movement();
+    if (movement.moving)
+    {
+        device.mouse_move(movement.dx, movement.dy, movement.wheel);
+    }
+
+    const auto left_button_state = mouse_state.get_button_state(MouseButton::LEFT);
+    const auto middle_button_state = mouse_state.get_button_state(MouseButton::MIDDLE);
+    const auto right_button_state = mouse_state.get_button_state(MouseButton::RIGHT);
+
+    const auto buttons = {
+        std::make_pair(DeviceMouseButton::LEFT, left_button_state),
+        std::make_pair(DeviceMouseButton::MIDDLE, middle_button_state),
+        std::make_pair(DeviceMouseButton::RIGHT, right_button_state)
+    };
+
+    for (const auto&[button_code, button_state] : buttons)
+    {
+        switch (button_state)
+        {
+            case ButtonState::JUST_PRESSED:
+                device.mouse_press(button_code);
+                break;
+            case ButtonState::JUST_RELEASED:
+                device.mouse_release(button_code);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 
 void send_key_report(KeyQueue& key_queue, Device& device)
 {
