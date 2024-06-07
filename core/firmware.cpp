@@ -2,6 +2,7 @@
 #include "../common/constants.h"
 #include "backlight/schemes/wave.h"
 #include "keyboard/communication.h"
+#include "keyboard/keymap_loader.h"
 
 namespace core
 {
@@ -21,7 +22,7 @@ void Firmware::update()
 {
     if (!loaded_keymap)
     {
-        const bool success = keymap.load_from_sd_else_default(device);
+        const bool success = keyboard::KeyMapLoader::load_from_sd_else_default(device, keymap);
         if (success)
         {
             backlight.signal_success();

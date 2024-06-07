@@ -1,4 +1,5 @@
 #include "../keymap.h"
+#include "../keymap_loader.h"
 #include <catch_amalgamated.hpp>
 
 
@@ -217,7 +218,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
         const uint16_t cols[] = {0, 3, 3};
 
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]), keymap);
         REQUIRE(success);
 
         for (unsigned l = 0; l < common::constants::MAX_NUM_LAYERS; ++l)
@@ -290,23 +291,23 @@ TEST_CASE("Test keymap load", "[KeyMap]")
     SECTION("Test invalid checksum")
     {
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(invalid_checksum,
-            sizeof(invalid_checksum) / sizeof(invalid_checksum[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(invalid_checksum,
+            sizeof(invalid_checksum) / sizeof(invalid_checksum[0]), keymap);
         REQUIRE(!success);
     }
 
     SECTION("Test invalid sequence lengths")
     {
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(invalid_sequence_lengths,
-            sizeof(invalid_sequence_lengths) / sizeof(invalid_sequence_lengths[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(invalid_sequence_lengths,
+            sizeof(invalid_sequence_lengths) / sizeof(invalid_sequence_lengths[0]), keymap);
         REQUIRE(!success);
     }
     SECTION("Test invalid keycodes")
     {
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(invalid_keycodes,
-            sizeof(invalid_keycodes) / sizeof(invalid_keycodes[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(invalid_keycodes,
+            sizeof(invalid_keycodes) / sizeof(invalid_keycodes[0]), keymap);
         REQUIRE(!success);
     }
 }
@@ -314,7 +315,7 @@ TEST_CASE("Test keymap load", "[KeyMap]")
 TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
 {
     core::keyboard::KeyMap keymap;
-    const auto success = keymap.deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]));
+    const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(VALID_DATA, sizeof(VALID_DATA) / sizeof(VALID_DATA[0]), keymap);
     REQUIRE(success);
 
     const common::KeyDescription descriptions[]
@@ -441,7 +442,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         };
 
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(data, sizeof(data) / sizeof(data[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(data, sizeof(data) / sizeof(data[0]), keymap);
         REQUIRE(success);
 
         core::keyboard::KeyQueue queue;
@@ -570,7 +571,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         };
 
         core::keyboard::KeyMap keymap;
-        const auto success = keymap.deserialize_keymap(data, sizeof(data) / sizeof(data[0]));
+        const auto success = core::keyboard::KeyMapLoader::deserialize_keymap(data, sizeof(data) / sizeof(data[0]), keymap);
         REQUIRE(success);
 
         core::keyboard::KeyQueue queue;

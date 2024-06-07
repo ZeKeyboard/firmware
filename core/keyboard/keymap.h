@@ -20,8 +20,11 @@ struct KeyReport
 
 typedef util::FixedSizeQueue<KeyReport, common::constants::MAX_QUEUED_KEY_EVENTS> KeyQueue;
 
+
 class KeyMap
 {
+    friend class KeyMapLoader;
+
 public:
     void translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue);
 
@@ -35,9 +38,6 @@ public:
 
     int current_layer = 0;
 
-    bool load_from_sd_else_default(Device& device);
-    bool deserialize_keymap(const uint16_t* data, int size);
-
 private:
 
     void load_default();
@@ -46,8 +46,6 @@ private:
     bool layer_fallback = false;
 
     Action* actions[common::constants::MAX_NUM_LAYERS][common::constants::NUM_ROWS][common::constants::NUM_COLS];
-    bool check_checksum(const uint16_t* data, int size) const;
-    bool check_sequence_lengths(const uint16_t* data, int size) const;
 
     int get_hold_layer(const KeyboardScanResult& scan_result) const;
 
@@ -61,6 +59,7 @@ private:
      * Returns true if the action is a single key press.
      */
     bool extract_single_key(const Action* action, KeyReport& single_key_report);
+
 };
 
 }
