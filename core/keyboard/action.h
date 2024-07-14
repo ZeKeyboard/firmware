@@ -29,6 +29,8 @@ struct Action
     uint8_t sequence_length;
 
     bool is_single_key() const;
+
+    bool is_mouse_action() const;
 };
 
 }

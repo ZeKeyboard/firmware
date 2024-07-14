@@ -167,7 +167,7 @@ inline uint8_t get_layer_hold_modifier_layer(uint16_t key)
 
 inline uint8_t get_layer_toggle_modifier_layer(uint16_t key)
 {
-    return (key & 0x00FF) - 131;
+    return (key & 0x00FF) - 132;
 }
 
 inline bool key_is_layer_hold_modifier(uint16_t key)
@@ -190,7 +190,8 @@ inline bool key_is_layer_toggle_modifier(uint16_t key)
 
 inline bool key_is_mouse_key(uint16_t key)
 {
-    return (key & 0xFF00) == common::constants::MOUSE_BASE_CODE;
+    uint8_t code = key & 0x00FF;
+    return code <= common::constants::MAX_MOUSE_CODE && code >= 116;
 }
 
 inline bool key_is_control_key(uint16_t key)

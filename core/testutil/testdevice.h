@@ -13,59 +13,64 @@ namespace testutil
 class TestDeviceBase : public Device
 {
 public:
-    virtual void sleep_millis(const int) { }
-    virtual void sleep_micros(const int) { }
-    virtual void gpio_setup(const uint8_t, const PinMode) { }
-    virtual void gpio_write(const uint8_t, const PinState) { }
-    virtual PinState gpio_read(const uint8_t) { return {}; }
+    virtual void sleep_millis(const int) override { }
+    virtual void sleep_micros(const int) override { }
+    virtual void gpio_setup(const uint8_t, const PinMode) override { }
+    virtual void gpio_write(const uint8_t, const PinState) override { }
+    virtual PinState gpio_read(const uint8_t) override { return {}; }
 
-    virtual void set_keyboard_key1(const uint8_t) { }
-    virtual void set_keyboard_key2(const uint8_t) { }
-    virtual void set_keyboard_key3(const uint8_t) { }
-    virtual void set_keyboard_key4(const uint8_t) { }
-    virtual void set_keyboard_key5(const uint8_t) { }
-    virtual void set_keyboard_key6(const uint8_t) { }
-    virtual void set_keyboard_modifier(const uint16_t) { }
-    virtual void set_keyboard_media(const uint16_t) { }
-    virtual void keyboard_send() { }
+    virtual void set_keyboard_key1(const uint8_t) override { }
+    virtual void set_keyboard_key2(const uint8_t) override { }
+    virtual void set_keyboard_key3(const uint8_t) override { }
+    virtual void set_keyboard_key4(const uint8_t) override { }
+    virtual void set_keyboard_key5(const uint8_t) override { }
+    virtual void set_keyboard_key6(const uint8_t) override { }
+    virtual void set_keyboard_modifier(const uint16_t) override { }
+    virtual void set_keyboard_media(const uint16_t) override { }
+    virtual void keyboard_send() override { }
 
-    virtual bool serial_data_available() { return false; }
-    virtual void serial_read(char*&, uint32_t&) { }
+    virtual bool serial_data_available() override { return false; }
+    virtual void serial_read(char*&, uint32_t&) override { }
 
-    virtual bool sd_init() { return false; }
-    virtual bool sd_read(const char*, char*&, uint32_t&) const { return false; }
-    virtual bool sd_write(const char*, const char*, const uint32_t) { return false; }
+    virtual bool sd_init() override { return false; }
+    virtual bool sd_read(const char*, char*&, uint32_t&) const override { return false; }
+    virtual bool sd_write(const char*, const char*, const uint32_t) override { return false; }
 
-    virtual uint16_t get_keyboard_leds() { return 0; }
+    virtual uint16_t get_keyboard_leds() override { return 0; }
 
-    virtual void serial_begin(const uint32_t) { }
-    virtual void serial_print(const char*) { }
+    virtual void serial_begin(const uint32_t) override { }
+    virtual void serial_print(const char*) override { }
 
-    virtual void serial_print(uint8_t) { }
-    virtual void serial_print(uint16_t) { }
-    virtual void serial_print(uint32_t) { }
-    virtual void serial_print(int8_t) { }
-    virtual void serial_print(int16_t) { }
-    virtual void serial_print(int32_t) { }
+    virtual void serial_print(uint8_t) override { }
+    virtual void serial_print(uint16_t) override { }
+    virtual void serial_print(uint32_t) override { }
+    virtual void serial_print(int8_t) override { }
+    virtual void serial_print(int16_t) override { }
+    virtual void serial_print(int32_t) override { }
 
-    virtual void serial_println(const char*) { }
-    virtual void serial_println(uint8_t) { }
-    virtual void serial_println(uint16_t) { }
-    virtual void serial_println(uint32_t) { }
-    virtual void serial_println(int8_t) { }
-    virtual void serial_println(int16_t) { }
-    virtual void serial_println(int32_t) { }
+    virtual void serial_println(const char*) override { }
+    virtual void serial_println(uint8_t) override { }
+    virtual void serial_println(uint16_t) override { }
+    virtual void serial_println(uint32_t) override { }
+    virtual void serial_println(int8_t) override { }
+    virtual void serial_println(int16_t) override { }
+    virtual void serial_println(int32_t) override { }
 
-    virtual void start_timer() { }
-    virtual uint32_t get_timer_micros() { return 0; }
+    virtual void mouse_init() override { }
+    virtual void mouse_move(int8_t, int8_t, int8_t) override { }
+    virtual void mouse_press(DeviceMouseButton) override { }
+    virtual void mouse_release(DeviceMouseButton) override { }
+
+    virtual void start_timer() override { }
+    virtual uint32_t get_timer_micros() override { return 0; }
 
     /**
      * Milliseconds since the device was started.
      */
-    virtual uint32_t milliseconds_since_start() const { return 0; }
+    virtual uint32_t milliseconds_since_start() const override { return 0; }
 
-    virtual void set_led(uint16_t, uint8_t, uint8_t, uint8_t) { }
-    virtual void update_leds() { }
+    virtual void set_led(uint16_t, uint8_t, uint8_t, uint8_t) override { }
+    virtual void update_leds() override { }
 
 };
 

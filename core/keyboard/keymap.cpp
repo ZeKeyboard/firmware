@@ -1,5 +1,7 @@
 #include "keymap.h"
 #include "keyutils.h"
+#include "mouse.h"
+#include "../../common/custom_keycodes.h"
 
 
 namespace core::keyboard
@@ -61,7 +63,7 @@ void KeyMap::update_current_layer(const KeyboardScanResult& scan_result)
 }
 
 
-bool KeyMap::extract_single_key(const Action* action, KeyReport& single_key_report)
+bool KeyMap::extract_single_key(const Action* action, KeyReport& single_key_report) const
 {
     if (action->is_single_key())
     {
@@ -83,7 +85,62 @@ bool KeyMap::extract_single_key(const Action* action, KeyReport& single_key_repo
 }
 
 
-void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue)
+void KeyMap::read_mouse_keys(const KeyboardScanResult& scan_result, MouseState& mouse) const
+{
+    bool left = false;
+    bool middle = false;
+    bool right = false;
+
+    for (int i = 0; i < scan_result.num_pressed; ++i)
+    {
+        const auto key = scan_result.pressed[i];
+        const auto action = get_action(current_layer, key->row, key->col);
+        if (action != nullptr && action->is_mouse_action())
+        {
+            const auto code = action->sequence[0].key;
+            switch (code)
+            {
+                case common::constants::MOUSE_LEFT_CLICK:
+                    left = true;
+                    break;
+                case common::constants::MOUSE_MIDDLE_CLICK:
+                    middle = true;
+                    break;
+                case common::constants::MOUSE_RIGHT_CLICK:
+                    right = true;
+                    break;
+                case common::constants::MOUSE_MOVE_UP:
+                    mouse.set_dy(-1);
+                    break;
+                case common::constants::MOUSE_MOVE_DOWN:
+                    mouse.set_dy(1);
+                    break;
+                case common::constants::MOUSE_MOVE_LEFT:
+                    mouse.set_dx(-1);
+                    break;
+                case common::constants::MOUSE_MOVE_RIGHT:
+                    mouse.set_dx(1);
+                    break;
+                case common::constants::MOUSE_SCROLL_UP:
+                    mouse.set_wheel(1);
+                    break;
+                case common::constants::MOUSE_SCROLL_DOWN:
+                    mouse.set_wheel(-1);
+                    break;
+                case common::constants::MOUSE_MOVE_ACCELERATE:
+                    mouse.accelerated = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    mouse.set_buttons(left, middle, right);
+}
+
+
+void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue, MouseState& mouse)
 {
     /*
      * This function implements the following logic:
@@ -92,8 +149,11 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
      * they should all be sent together in a single report. This is because the user
      * might be holding down several keys together.
      * If the keys are part of a sequence, they should be sent in separate report, all queued up. This is because they need to be sent separately for the computer to intepret them as separate keypresses.
-     * Before everything, the presence of layer modifiers are checked and handled accordingly.
+     * Before everything, the presence of layer modifiers are checked and handled accordingly,
+     * and mouse keys are handled, separately from the keyboard keys.
      */
+
+    read_mouse_keys(scan_result, mouse);
 
     KeyReport single_key_report;
     bool single_key_pressed = false;
@@ -107,19 +167,18 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
     {
         const auto key = scan_result.pressed[i];
         const auto action = get_action(layer_to_use, key->row, key->col);
-        if (action != nullptr)
+        if (action != nullptr && !action->is_mouse_action())
         {
             single_key_pressed |= extract_single_key(action, single_key_report);
         }
     }
-
 
     // handle sequences, these should start only once
     for (int i = 0; i < scan_result.num_just_pressed; ++i)
     {
         const auto key = scan_result.just_pressed[i];
         const auto action = get_action(layer_to_use, key->row, key->col);
-        if (action != nullptr && !action->is_single_key())
+        if (action != nullptr && !action->is_single_key() && !action->is_mouse_action())
         {
             for (int j = 0; j < action->sequence_length; ++j)
             {

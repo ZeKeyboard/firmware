@@ -20,6 +20,7 @@ Firmware::Firmware(Device& device) :
 
 void Firmware::update()
 {
+    mouse_state.reset();
     if (!loaded_keymap)
     {
         const bool success = keyboard::KeyMapLoader::load_from_sd_else_default(device, keymap);
@@ -35,8 +36,9 @@ void Firmware::update()
     }
     device.start_timer();
     key_scanner.scan(keyboard_scan_result);
-    keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue);
+    keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue, mouse_state);
     keyboard::communication::send_key_report(key_queue, device);
+    keyboard::communication::send_mouse_commands(mouse_state, device);
     backlight.update(keyboard_scan_result);
 
     const uint32_t elapsed = device.get_timer_micros();

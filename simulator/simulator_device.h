@@ -61,6 +61,11 @@ public:
     virtual void serial_println(int16_t) override { }
     virtual void serial_println(int32_t) override { }
 
+    virtual void mouse_init() override { }
+    virtual void mouse_move(int8_t, int8_t, int8_t) override;
+    virtual void mouse_press(DeviceMouseButton) override;
+    virtual void mouse_release(DeviceMouseButton) override;
+
     void set_pressed_row_and_col(const int row, const int col, const bool pressed);
 
     virtual void start_timer() override;
