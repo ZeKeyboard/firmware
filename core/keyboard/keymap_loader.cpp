@@ -2,7 +2,6 @@
 #include "keyutils.h"
 #include "../util/buffer_utils.h"
 #include <cstdint>
-#include <iostream>
 
 
 namespace core::keyboard
@@ -248,7 +247,6 @@ bool KeyMapLoader::deserialize_keymap(const uint16_t* data, int size, KeyMap& ke
         const uint16_t layer = data[i++];
         const uint16_t row = data[i++];
         const uint16_t col = data[i++];
-        std::cout << row << " " << col << std::endl;
 
         const uint16_t sequence_length = data[i++];
 

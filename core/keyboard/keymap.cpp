@@ -55,8 +55,16 @@ void KeyMap::update_current_layer(const KeyboardScanResult& scan_result)
             const auto code = action->sequence[0].key;
             if (util::key_is_layer_toggle_modifier(code))
             {
-                const auto layer = util::get_layer_toggle_modifier_layer(code);
-                current_layer = current_layer == layer ? 0 : layer;
+                if (!just_toggled_layer)
+                {
+                    const auto layer = util::get_layer_toggle_modifier_layer(code);
+                    current_layer = current_layer == layer ? 0 : layer;
+                    just_toggled_layer = true;
+                }
+            }
+            else
+            {
+                just_toggled_layer = false;
             }
         }
     }
