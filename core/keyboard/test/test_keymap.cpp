@@ -505,7 +505,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         const uint16_t data[]
         {
             7,      // num keys
-            32729,  // checksum
+            32730,  // checksum
 
             0,  // layer 0
             0,  // row 0
