@@ -41,6 +41,8 @@ struct LEDState
      */
     void start_fade(const Device& device, const Color& fade_start_color, const uint32_t fade_time = common::constants::DEFAULT_FADE_TIME);
 
+    void reset();
+
     const common::LEDDescription* description;
 
     friend class Backlight;

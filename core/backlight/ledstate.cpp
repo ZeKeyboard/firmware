@@ -20,6 +20,13 @@ void LEDState::start_fade(const Device& device, const Color& fade_start_color, c
     this->fade_start_color = fade_start_color;
 }
 
+void LEDState::reset()
+{
+    blinking = false;
+    fading = false;
+    color = colors::BLACK;
+}
+
 bool LEDState::is_blinking() const
 {
     return blinking;

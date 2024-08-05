@@ -36,13 +36,15 @@ void Firmware::update()
 
         mouse_state.mouse_speed = settings.mouse_speed;
         mouse_state.mouse_acceleration = settings.mouse_acceleration;
+
+        backlight.highlight_keys_on_layer = settings.highlight_layer_keys;
     }
     device.start_timer();
     key_scanner.scan(keyboard_scan_result);
     keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue, mouse_state);
     keyboard::communication::send_key_report(key_queue, device);
     keyboard::communication::send_mouse_commands(mouse_state, device);
-    backlight.update(keyboard_scan_result);
+    backlight.update(keyboard_scan_result, keymap);
 
     const uint32_t elapsed = device.get_timer_micros();
     if (elapsed < CYCLE_TIME_MICROS)

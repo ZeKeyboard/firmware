@@ -44,8 +44,6 @@ private:
 
     void load_default();
 
-    bool just_toggled_layer = false;
-
     // TODO make this configurable (see issue #1)
     bool layer_fallback = false;
 

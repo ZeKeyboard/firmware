@@ -46,25 +46,17 @@ int KeyMap::get_hold_layer(const KeyboardScanResult& scan_result) const
 
 void KeyMap::update_current_layer(const KeyboardScanResult& scan_result)
 {
-    for (int i = 0; i < scan_result.num_pressed; ++i)
+    for (int i = 0; i < scan_result.num_just_pressed; ++i)
     {
-        const auto key = scan_result.pressed[i];
+        const auto key = scan_result.just_pressed[i];
         const auto action = get_action(0, key->row, key->col);
         if (action != nullptr && action->is_single_key())
         {
             const auto code = action->sequence[0].key;
             if (util::key_is_layer_toggle_modifier(code))
             {
-                if (!just_toggled_layer)
-                {
-                    const auto layer = util::get_layer_toggle_modifier_layer(code);
-                    current_layer = current_layer == layer ? 0 : layer;
-                    just_toggled_layer = true;
-                }
-            }
-            else
-            {
-                just_toggled_layer = false;
+                const auto layer = util::get_layer_toggle_modifier_layer(code);
+                current_layer = current_layer == layer ? 0 : layer;
             }
         }
     }

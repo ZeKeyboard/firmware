@@ -615,9 +615,10 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         queue.pop();
 
         // test toggle layer
-        scan_result.num_pressed = 2;
-        scan_result.pressed[0] = &descriptions[2];  // toggle layer 2
-        scan_result.pressed[1] = &descriptions[3];  // key on layer 2
+        scan_result.num_pressed = 1;
+        scan_result.num_just_pressed = 1;
+        scan_result.just_pressed[0] = &descriptions[2];  // toggle layer 2
+        scan_result.pressed[0] = &descriptions[3];  // key on layer 2
 
         keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 1);
@@ -629,6 +630,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
 
         // layer 2 should still be active
         scan_result.num_pressed = 1;
+        scan_result.num_just_pressed = 0;
         scan_result.pressed[0] = &descriptions[3];  // key on layer 2
 
         keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
@@ -640,13 +642,15 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         queue.pop();
 
         // layer 2 should be deactivated
-        scan_result.num_pressed = 1;
-        scan_result.pressed[0] = &descriptions[2];  // toggle layer 2
+        scan_result.num_just_pressed = 1;
+        scan_result.num_pressed = 0;
+        scan_result.just_pressed[0] = &descriptions[2];  // toggle layer 2
 
         keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
         REQUIRE(queue.size() == 0);
 
         // layer 2 should no longer be active
+        scan_result.num_just_pressed = 0;
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[3];  // key on layer 2 but also layer 0
         keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state);
