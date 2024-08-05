@@ -80,26 +80,6 @@ void KeyboardState::draw_row_and_col_state(
     {
         window.draw(col_rect);
     }
-
-    const auto action = keymap.get_action(keymap.current_layer, row, col);
-    if (action != nullptr && action->is_single_key())
-    {
-        sf::Text text;
-        text.setFont(font);
-        text.setCharacterSize(20);
-        text.setFillColor(sf::Color::White);
-        const auto code = action->sequence[0].key;
-        if (KEY_CODES.contains(code))
-        {
-            text.setString(KEY_CODES.at(code));
-        }
-        else
-        {
-            text.setString(std::to_string(code));
-        }
-        text.setPosition(x + KEY_SIZE/4.0, y + KEY_SIZE/4.0);
-        window.draw(text);
-    }
 }
 
 
@@ -138,7 +118,32 @@ void KeyboardState::draw(sf::RenderWindow& window)
         const auto y = key.description->y * (KEY_SIZE + KEY_PADDING) + OFFSET_Y;
         rectangle.setPosition(x, y);
         window.draw(rectangle);
-        draw_row_and_col_state(window, key.description->row, key.description->col, x, y);
+
+        const auto row = key.description->row;
+        const auto col = key.description->col;
+
+        draw_row_and_col_state(window, row, col, x, y);
+
+        const auto action = keymap.get_action(keymap.current_layer, row, col);
+        if (action != nullptr && action->is_single_key())
+        {
+            sf::Text text;
+            text.setFont(font);
+            text.setCharacterSize(20);
+            text.setFillColor(sf::Color::White);
+            const auto code = action->sequence[0].key;
+
+            if (KEY_CODES.contains(code))
+            {
+                text.setString(KEY_CODES.at(code));
+            }
+            else
+            {
+                text.setString(std::to_string(code));
+            }
+            text.setPosition(x + KEY_SIZE/4.0, y + KEY_SIZE/4.0);
+            window.draw(text);
+        }
     }
 }
 

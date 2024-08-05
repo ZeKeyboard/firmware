@@ -1,10 +1,58 @@
 #include "keymap_loader.h"
 #include "keyutils.h"
 #include "../util/buffer_utils.h"
+#include <cstdint>
+#include <iostream>
 
 
 namespace core::keyboard
 {
+
+
+const uint64_t SETTINGS_START_WORD = 0xDEADBEEFDEADBEEF;
+
+const uint16_t MOUSE_SPEED_NUMBER = 0;
+const uint16_t MOUSE_ACCELERATION_NUMBER = 1;
+const uint16_t HIGHLIGHT_LAYER_KEYS_NUMBER = 2;
+
+
+struct DataProperties
+{
+    uint16_t* settings_start;
+    int keymap_size;
+    int settings_size;
+};
+
+
+DataProperties find_keymap_settings_split(const uint16_t* data, int size)
+{
+    DataProperties properties;
+    properties.settings_start = nullptr;
+    properties.keymap_size = 0;
+    properties.settings_size = 0;
+
+    for (int i = 0; i < size - 1; i++)
+    {
+        const uint64_t word =
+            data[i + 3]
+            | (static_cast<uint64_t>(data[i + 2]) << 16)
+            | (static_cast<uint64_t>(data[i + 1]) << 32)
+            | (static_cast<uint64_t>(data[i]) << 48);
+        if (word == SETTINGS_START_WORD)
+        {
+            properties.settings_start = const_cast<uint16_t*>(&data[i + 4]);
+            properties.keymap_size = i;
+            properties.settings_size = size - i - 4;
+            break;
+        }
+    }
+
+    properties.keymap_size = properties.settings_start == nullptr
+        ? size
+        : properties.keymap_size;
+
+    return properties;
+}
 
 
 void KeyMapLoader::load_default(KeyMap& keymap)
@@ -89,7 +137,7 @@ bool KeyMapLoader::check_checksum(const uint16_t* data, int size)
 }
 
 
-bool KeyMapLoader::load_from_sd_else_default(Device& device, KeyMap& keymap)
+bool KeyMapLoader::load_from_sd_else_default(Device& device, KeyMap& keymap, Settings& settings)
 {
     char* ascii_buffer;
     uint32_t num_read_ascii_chars;
@@ -105,15 +153,69 @@ bool KeyMapLoader::load_from_sd_else_default(Device& device, KeyMap& keymap)
     {
         const uint16_t* data = reinterpret_cast<const uint16_t*>(buffer);
         const int size = num_read_bytes / 2;
-        const bool success = deserialize_keymap(data, size, keymap);
+        const auto properties = find_keymap_settings_split(data, size);
+        const bool keymap_success = deserialize_keymap(data, properties.keymap_size, keymap);
+        bool settings_success = true;
+        if (properties.settings_start != nullptr)
+        {
+            settings_success = deserialize_settings(properties.settings_start, properties.settings_size, settings);
+        }
         delete[] buffer;
-        if (success)
+        if (keymap_success && settings_success)
         {
             return true;
         }
     }
     load_default(keymap);
     return false;
+}
+
+
+bool KeyMapLoader::deserialize_settings(const uint16_t* data, int size, Settings& settings)
+{
+    if (!check_settings_checksum(data, size))
+    {
+        return false;
+    }
+
+    const int num_settings = data[0];
+
+    const uint16_t* settings_ptr = &data[2];
+    for (int i = 0; i < num_settings * 2; i += 2)
+    {
+        const uint16_t setting_number = settings_ptr[i];
+        const uint16_t setting_value = settings_ptr[i + 1];
+
+        if (setting_number == MOUSE_SPEED_NUMBER)
+        {
+            settings.mouse_speed = setting_value;
+        }
+        else if (setting_number == MOUSE_ACCELERATION_NUMBER)
+        {
+            settings.mouse_acceleration = setting_value;
+        }
+        else if (setting_number == HIGHLIGHT_LAYER_KEYS_NUMBER)
+        {
+            settings.highlight_layer_keys = setting_value;
+        }
+    }
+
+    return true;
+}
+
+
+bool KeyMapLoader::check_settings_checksum(const uint16_t* data, int size)
+{
+    if (size < 2)
+    {
+        return false;
+    }
+    uint16_t checksum = 0;
+    for (int i = 2; i < size; i++)
+    {
+        checksum = (checksum + data[i]) % common::constants::CHECKSUM_PERIOD;
+    }
+    return checksum == data[1];
 }
 
 
@@ -146,6 +248,7 @@ bool KeyMapLoader::deserialize_keymap(const uint16_t* data, int size, KeyMap& ke
         const uint16_t layer = data[i++];
         const uint16_t row = data[i++];
         const uint16_t col = data[i++];
+        std::cout << row << " " << col << std::endl;
 
         const uint16_t sequence_length = data[i++];
 

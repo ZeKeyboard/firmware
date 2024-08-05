@@ -5,6 +5,7 @@
 #include "backlight/schemes/wave.h"
 #include "keyboard/keymap.h"
 #include "keyboard/keyscan.h"
+#include "keyboard/settings.h"
 
 namespace simulator { class SimulatorWindow; }
 
@@ -26,6 +27,7 @@ private:
     keyboard::KeyMap keymap;
     keyboard::KeyboardScanResult keyboard_scan_result;
     keyboard::MouseState mouse_state;
+    keyboard::Settings settings;
 
     bool loaded_keymap = false;
 

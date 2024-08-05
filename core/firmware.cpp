@@ -23,7 +23,7 @@ void Firmware::update()
     mouse_state.reset();
     if (!loaded_keymap)
     {
-        const bool success = keyboard::KeyMapLoader::load_from_sd_else_default(device, keymap);
+        const bool success = keyboard::KeyMapLoader::load_from_sd_else_default(device, keymap, settings);
         if (success)
         {
             backlight.signal_success();
