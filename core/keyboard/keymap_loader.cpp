@@ -1,7 +1,7 @@
 #include "keymap_loader.h"
 #include "keyutils.h"
 #include "../util/buffer_utils.h"
-#include <cstdint>
+#include <stdint.h>
 
 
 namespace core::keyboard

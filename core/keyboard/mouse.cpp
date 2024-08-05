@@ -10,12 +10,12 @@ MouseMovement MouseState::get_movement() const
         return {};
     }
 
-    const int8_t acceleration = accelerated ? MOUSE_ACCELERATION_AMOUNT : 1;
+    const int8_t acceleration = accelerated ? mouse_acceleration : 1;
 
     return {
         true,
-        static_cast<int8_t>(dx * MOUSE_MOVE_DEFAULT_SPEED * acceleration),
-        static_cast<int8_t>(dy * MOUSE_MOVE_DEFAULT_SPEED  * acceleration),
+        static_cast<int8_t>(dx * mouse_speed * acceleration),
+        static_cast<int8_t>(dy * mouse_speed * acceleration),
         static_cast<int8_t>(wheel * MOUSE_WHEEL_DEFAULT_SPEED  * acceleration)
     };
 }

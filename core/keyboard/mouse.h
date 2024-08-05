@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include <stdint.h>
 
 
 namespace core::keyboard
@@ -32,10 +32,9 @@ struct MouseMovement
 };
 
 
-// TODO make configurable
 const int8_t MOUSE_ACCELERATION_AMOUNT = 2;
 
-const int8_t MOUSE_MOVE_DEFAULT_SPEED = 1;
+const int8_t MOUSE_MOVE_DEFAULT_SPEED = 5;
 const int8_t MOUSE_WHEEL_DEFAULT_SPEED = 1;
 
 class MouseState
@@ -58,6 +57,9 @@ public:
         dy = 0;
         wheel = 0;
     }
+
+    int8_t mouse_speed = MOUSE_MOVE_DEFAULT_SPEED;
+    int8_t mouse_acceleration = MOUSE_ACCELERATION_AMOUNT;
 
 private:
     int8_t dx = 0;

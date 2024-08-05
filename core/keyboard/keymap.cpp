@@ -99,6 +99,8 @@ void KeyMap::read_mouse_keys(const KeyboardScanResult& scan_result, MouseState& 
     bool middle = false;
     bool right = false;
 
+    mouse.accelerated = false;
+
     for (int i = 0; i < scan_result.num_pressed; ++i)
     {
         const auto key = scan_result.pressed[i];

@@ -22,9 +22,9 @@ enum class PinState
 
 enum class DeviceMouseButton
 {
-    LEFT = 0,
-    RIGHT = 1,
-    MIDDLE = 2,
+    LEFT = 1,
+    RIGHT = 2,
+    MIDDLE = 4,
 };
 
 

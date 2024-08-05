@@ -33,6 +33,9 @@ void Firmware::update()
             backlight.signal_failure();
         }
         loaded_keymap = true;
+
+        mouse_state.mouse_speed = settings.mouse_speed;
+        mouse_state.mouse_acceleration = settings.mouse_acceleration;
     }
     device.start_timer();
     key_scanner.scan(keyboard_scan_result);
