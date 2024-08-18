@@ -32,10 +32,15 @@ private:
 
     void highlight_layer_keys(const core::keyboard::KeyMap& keymap);
 
+    void start_blink_on_layer_modifiers(int layer, const core::keyboard::KeyMap& keymap);
+    void stop_blink_on_layer_modifiers(int layer, const core::keyboard::KeyMap& keymap);
+
     Device& device;
     LEDState led_states[common::constants::TOTAL_NUM_LEDS];
 
     int current_scheme_index = 0;
+
+    int highlighted_layer = 0;
 
     const int num_schemes;
     schemes::Scheme** schemes;

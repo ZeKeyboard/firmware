@@ -35,11 +35,18 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
 {
     if (highlight_keys_on_layer && keymap.current_layer != 0)
     {
-        reset_all_states();
+        if (highlighted_layer != keymap.current_layer)
+        {
+            reset_all_states();
+            highlighted_layer = keymap.current_layer;
+            start_blink_on_layer_modifiers(highlighted_layer, keymap);
+        }
         highlight_layer_keys(keymap);
     }
     else
     {
+        stop_blink_on_layer_modifiers(highlighted_layer, keymap);
+        highlighted_layer = 0;
         auto* scheme = schemes[current_scheme_index];
         scheme->update(scan_result, led_states);
     }
@@ -51,6 +58,57 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
     }
     device.update_leds();
 }
+
+
+void Backlight::start_blink_on_layer_modifiers(int layer, const core::keyboard::KeyMap& keymap)
+{
+    for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+    {
+        LEDState& state = led_states[i];
+        const auto& led = state.description;
+        if (led->key == nullptr)
+        {
+            continue;
+        }
+        // layer modifiers are always on layer 0
+        const auto action = keymap.get_action(0, led->key->row, led->key->col);
+        if (action != nullptr)
+        {
+            const auto code = action->sequence[0].key;
+            if (core::keyboard::util::key_is_layer_toggle_modifier(code)
+                && core::keyboard::util::get_layer_toggle_modifier_layer(code) == layer)
+            {
+                state.start_blink(device);
+            }
+        }
+    }
+}
+
+
+void Backlight::stop_blink_on_layer_modifiers(int layer, const core::keyboard::KeyMap& keymap)
+{
+    for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+    {
+        LEDState& state = led_states[i];
+        const auto& led = state.description;
+        if (led->key == nullptr)
+        {
+            continue;
+        }
+        // layer modifiers are always on layer 0
+        const auto action = keymap.get_action(0, led->key->row, led->key->col);
+        if (action != nullptr)
+        {
+            const auto code = action->sequence[0].key;
+            if (core::keyboard::util::key_is_layer_toggle_modifier(code)
+                && core::keyboard::util::get_layer_toggle_modifier_layer(code) == layer)
+            {
+                state.reset();
+            }
+        }
+    }
+}
+
 
 void Backlight::highlight_layer_keys(const core::keyboard::KeyMap& keymap)
 {
@@ -80,12 +138,35 @@ void Backlight::highlight_layer_keys(const core::keyboard::KeyMap& keymap)
             }
             else
             {
-                state.color = colors::GREEN;
+                state.color = colors::YELLOW;
             }
         }
         else
         {
             state.color = colors::BLACK;
+        }
+    }
+
+    // highlight layer modifiers
+    for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+    {
+        LEDState& state = led_states[i];
+        const auto& led = state.description;
+        if (led->key == nullptr)
+        {
+            state.color = colors::BLACK;
+            continue;
+        }
+        const auto action = keymap.get_action(0,
+                                              led->key->row,
+                                              led->key->col);
+        if (action != nullptr)
+        {
+            const auto code = action->sequence[0].key;
+            if (core::keyboard::util::key_is_layer_toggle_modifier(code))
+            {
+                state.color = colors::GREEN;
+            }
         }
     }
 }
