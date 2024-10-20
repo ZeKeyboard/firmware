@@ -85,6 +85,37 @@ bool KeyMap::extract_single_key(const Action* action, KeyReport& single_key_repo
 }
 
 
+void KeyMap::read_control_keys(const KeyboardScanResult& scan_result, ControlState& control) const
+{
+    for (int i = 0; i < scan_result.num_just_pressed; ++i)
+    {
+        const auto key = scan_result.just_pressed[i];
+        const auto action = get_action(current_layer, key->row, key->col);
+        if (action != nullptr && action->is_control_action())
+        {
+            const auto code = action->sequence[0].key;
+            switch (code)
+            {
+                case common::constants::CONTROL_BRIGHTNESS_INC:
+                    control.increase_brightness = true;
+                    break;
+                case common::constants::CONTROL_BRIGHTNESS_DEC:
+                    control.decrease_brightness = true;
+                    break;
+                case common::constants::CONTROL_CONFIG_MODE_TOGGLE:
+                    control.toggle_config_mode = true;
+                    break;
+                case common::constants::CONTROL_NEXT_BACKLIGHT_MODE:
+                    control.next_backlight_mode = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+
 void KeyMap::read_mouse_keys(const KeyboardScanResult& scan_result, MouseState& mouse) const
 {
     bool left = false;
@@ -142,7 +173,12 @@ void KeyMap::read_mouse_keys(const KeyboardScanResult& scan_result, MouseState& 
 }
 
 
-void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_result, KeyQueue& key_queue, MouseState& mouse)
+void KeyMap::translate_keyboard_scan_result(
+        const KeyboardScanResult& scan_result,
+        KeyQueue& key_queue,
+        MouseState& mouse,
+        ControlState& control,
+        bool configuration_mode)
 {
     /*
      * This function implements the following logic:
@@ -154,6 +190,12 @@ void KeyMap::translate_keyboard_scan_result(const KeyboardScanResult& scan_resul
      * Before everything, the presence of layer modifiers are checked and handled accordingly,
      * and mouse keys are handled, separately from the keyboard keys.
      */
+
+    read_control_keys(scan_result, control);
+    if (configuration_mode)
+    {
+        return;
+    }
 
     read_mouse_keys(scan_result, mouse);
 

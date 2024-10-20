@@ -1,14 +1,17 @@
 #include "ledstate.h"
+#include <cmath>
+#include <cstdlib>
 
 namespace core::backlight
 {
 
 
-void LEDState::start_blink(const Device& device, const uint32_t period)
+void LEDState::start_blink(const Device& device, BlinkType blink_type, const uint32_t period)
 {
     blinking = true;
     blink_timer.duration = period;
-    blink_state = true;
+    blink_state = 1.0;
+    current_blink_type = blink_type;
     blink_timer.start(device);
 }
 
@@ -49,10 +52,22 @@ Color LEDState::update(const Device& device)
         blink_timer.update(device);
         if (blink_timer.is_finished())
         {
-            blink_state = !blink_state;
             blink_timer.start(device);
         }
-        return blink_state ? color : Color{0, 0, 0};
+        float blink = (blink_timer.progress() * 2.0) - 1.0; // [-1, 1]
+        if (current_blink_type == BlinkType::BINARY)
+        {
+            blink_state = blink > 0.0 ? 1.0 : 0.0;
+        }
+        else if (current_blink_type == BlinkType::LINEAR)
+        {
+            blink_state = std::abs(blink);
+        }
+        else if (current_blink_type == BlinkType::SINEWAVE)
+        {
+            blink_state = (std::sin(blink * M_PI) + 1.0) / 2.0;
+        }
+        return color * blink_state;
     }
     if (fading)
     {

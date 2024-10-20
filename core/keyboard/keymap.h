@@ -1,6 +1,7 @@
 #pragma once
 #include "../util/queue.h"
 #include "../../common/constants.h"
+#include "controlstate.h"
 #include "keyscan.h"
 #include "action.h"
 #include "mouse.h"
@@ -28,7 +29,11 @@ class KeyMap
 
 public:
     void translate_keyboard_scan_result(
-        const KeyboardScanResult& scan_result, KeyQueue& key_queue, MouseState& mouse);
+        const KeyboardScanResult& scan_result,
+        KeyQueue& key_queue,
+        MouseState& mouse,
+        ControlState& control,
+        bool configuration_mode);
 
     /**
      * Returns the action at the given layer, row, and column.
@@ -66,6 +71,8 @@ private:
      * Reads the mouse keys from the scan result and updates the mouse state.
      */
     void read_mouse_keys(const KeyboardScanResult& scan_result, MouseState& mouse) const;
+
+    void read_control_keys(const KeyboardScanResult& scan_result, ControlState& control) const;
 
 };
 

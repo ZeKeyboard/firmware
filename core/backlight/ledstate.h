@@ -8,6 +8,13 @@
 namespace core::backlight
 {
 
+enum class BlinkType
+{
+    BINARY,
+    LINEAR,
+    SINEWAVE
+};
+
 struct LEDState
 {
     /**
@@ -33,7 +40,7 @@ struct LEDState
     /**
      * Starts a blink sequence on the LED.
      */
-    void start_blink(const Device& device, const uint32_t period = common::constants::DEFAULT_BLINK_PERIOD);
+    void start_blink(const Device& device, BlinkType blink_type = BlinkType::BINARY, const uint32_t period = common::constants::DEFAULT_BLINK_PERIOD);
 
     /**
      * Starts a fade sequence on the LED. Will fade from the fade_start_color
@@ -57,7 +64,8 @@ private:
     Color fade_start_color;
     bool blinking = false;
     bool fading = false;
-    bool blink_state = false;
+    float blink_state = 0.0;
+    BlinkType current_blink_type;
     util::Timer blink_timer;
     util::Timer fade_timer;
 };

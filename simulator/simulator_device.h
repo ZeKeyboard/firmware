@@ -31,8 +31,9 @@ public:
     virtual void set_keyboard_media(const uint16_t media) override;
     virtual void keyboard_send() override;
 
-    virtual bool serial_data_available() override { return false; }
-    virtual void serial_read(char*&, uint32_t&) override { }
+    virtual bool serial_data_available() override;
+    virtual void serial_read(char*& buffer, uint32_t& num_read_bytes) override;
+    virtual void serial_clear() override;
 
     virtual bool sd_init() override;
     virtual bool sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const override;
@@ -75,6 +76,8 @@ public:
     virtual void set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b) override;
     virtual void update_leds() override;
 
+    virtual void reboot() override;
+
     uint8_t last_read_col;
     bool row_state[common::constants::NUM_ROWS];
 
@@ -87,6 +90,8 @@ public:
     uint8_t led_colors_b[common::constants::TOTAL_NUM_LEDS];
 
 private:
+    bool data_available = false;
+
     uint32_t start_time;
 
     uint16_t leds;

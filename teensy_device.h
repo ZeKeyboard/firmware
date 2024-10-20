@@ -29,6 +29,7 @@ public:
 
     virtual bool serial_data_available() override;
     virtual void serial_read(char*& buffer, uint32_t& num_read_bytes) override;
+    virtual void serial_clear() override;
 
     virtual bool sd_init() override;
     virtual bool sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const override;
@@ -64,6 +65,8 @@ public:
 
     virtual void set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b) override;
     virtual void update_leds() override;
+
+    virtual void reboot() override;
 
 private:
     uint32_t start_time;

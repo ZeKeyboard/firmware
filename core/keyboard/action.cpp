@@ -34,4 +34,9 @@ bool Action::is_mouse_action() const
     return is_single_key() && util::key_is_mouse_key(sequence[0].key);
 }
 
+bool Action::is_control_action() const
+{
+    return is_single_key() && util::key_is_control_key(sequence[0].key);
+}
+
 }

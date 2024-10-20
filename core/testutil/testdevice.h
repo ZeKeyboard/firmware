@@ -40,6 +40,7 @@ public:
 
     virtual void serial_begin(const uint32_t) override { }
     virtual void serial_print(const char*) override { }
+    virtual void serial_clear() override { }
 
     virtual void serial_print(uint8_t) override { }
     virtual void serial_print(uint16_t) override { }
@@ -71,6 +72,7 @@ public:
 
     virtual void set_led(uint16_t, uint8_t, uint8_t, uint8_t) override { }
     virtual void update_leds() override { }
+    virtual void reboot() override { }
 
 };
 

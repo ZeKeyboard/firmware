@@ -24,6 +24,8 @@ public:
 
     bool highlight_keys_on_layer = false;
 
+    void set_configure_mode(bool configure_mode, const core::keyboard::KeyMap& keymap);
+
 private:
     Color update_fade(LEDState& state);
     Color update_blink(LEDState& state);
@@ -44,6 +46,7 @@ private:
 
     const int num_schemes;
     schemes::Scheme** schemes;
+    bool configure_mode = false;
 };
 
 }

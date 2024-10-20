@@ -1,6 +1,8 @@
 #include "simulator_device.h"
 #include "keycodes.h"
 #include <chrono>
+#include <cstdlib>
+#include <filesystem>
 #include <mutex>
 #include <thread>
 #include <iostream>
@@ -159,16 +161,36 @@ bool SimulatorDevice::sd_read(const char* filename, char*& buffer, uint32_t& num
     return true;
 }
 
-bool SimulatorDevice::sd_write(const char* filename, const char* buffer, const uint32_t num_read_bytes)
+bool SimulatorDevice::sd_write(const char*, const char*, const uint32_t)
 {
-    std::ofstream file(filename, std::ios::binary);
+    return true;
+}
+
+bool SimulatorDevice::serial_data_available()
+{
+    return std::filesystem::exists("/tmp/Configuration.zkb");
+}
+
+void SimulatorDevice::serial_read(char*& buffer, uint32_t& num_read_bytes)
+{
+    std::ifstream file("/tmp/Configuration.zkb", std::ios::binary | std::ios::ate);
     if (!file.is_open())
     {
-        return false;
+        num_read_bytes = 0;
+        return;
     }
-    file.write(buffer, num_read_bytes);
+    num_read_bytes = file.tellg();
+    file.seekg(0, std::ios::beg);
+    buffer = new char[num_read_bytes];
+    file.read(buffer, num_read_bytes);
     file.close();
-    return true;
+
+    std::filesystem::remove("/tmp/Configuration.zkb");
+}
+
+void SimulatorDevice::serial_clear()
+{
+    std::filesystem::remove("/tmp/Configuration.zkb");
 }
 
 void SimulatorDevice::start_timer()
@@ -210,6 +232,12 @@ void SimulatorDevice::mouse_press(DeviceMouseButton button)
 void SimulatorDevice::mouse_release(DeviceMouseButton button)
 {
     std::cout << "SimulatorDevice::mouse_release(" << (int)button << ")" << std::endl;
+}
+
+void SimulatorDevice::reboot()
+{
+    // yes I know, this isn't actually rebooting but it doesn't matter
+    std::exit(0);
 }
 
 }

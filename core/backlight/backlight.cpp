@@ -1,6 +1,7 @@
 #include "backlight.h"
 #include "color.h"
 #include "../keyboard/keyutils.h"
+#include "ledstate.h"
 
 
 namespace core::backlight
@@ -47,8 +48,11 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
     {
         stop_blink_on_layer_modifiers(highlighted_layer, keymap);
         highlighted_layer = 0;
-        auto* scheme = schemes[current_scheme_index];
-        scheme->update(scan_result, led_states);
+        if (!configure_mode)
+        {
+            auto* scheme = schemes[current_scheme_index];
+            scheme->update(scan_result, led_states);
+        }
     }
     for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
     {
@@ -185,7 +189,49 @@ void Backlight::signal_success()
     for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
     {
         LEDState& state = led_states[i];
-        state.start_fade(device, colors::GREEN, 10000);
+        state.color = colors::GREEN;
+        state.start_blink(device, BlinkType::BINARY, 3000);
+    }
+}
+
+void Backlight::set_configure_mode(bool configure_mode, const core::keyboard::KeyMap& keymap)
+{
+    this->configure_mode = configure_mode;
+
+    for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+    {
+        LEDState& state = led_states[i];
+        state.reset();
+    }
+    if (configure_mode)
+    {
+        for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+        {
+            LEDState& state = led_states[i];
+            state.color = colors::YELLOW;
+            state.start_blink(device, BlinkType::SINEWAVE, 2000);
+
+            // look for and highlight the toggle key
+            const auto& led = state.description;
+            if (led->key == nullptr)
+            {
+                state.color = colors::BLACK;
+                continue;
+            }
+
+            const auto action = keymap.get_action(keymap.current_layer,
+                                                  led->key->row,
+                                                  led->key->col);
+            if (action != nullptr)
+            {
+                const auto code = action->sequence[0].key;
+                if (code == common::constants::CONTROL_CONFIG_MODE_TOGGLE)
+                {
+                    state.reset();
+                    state.color = colors::GREEN;
+                }
+            }
+        }
     }
 }
 

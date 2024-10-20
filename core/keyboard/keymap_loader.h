@@ -26,6 +26,8 @@ public:
 
     static bool deserialize_keymap(const uint16_t* data, int size, KeyMap& keymap);
 
+    static bool verify_keymap(const uint16_t* data, int size);
+
 private:
     static bool deserialize_settings(const uint16_t* data, int size, Settings& settings);
     static bool check_checksum(const uint16_t* data, int size);

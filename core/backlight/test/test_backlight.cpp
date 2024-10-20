@@ -17,7 +17,7 @@ public:
             led_states[i].color = colors[i];
             if (i == blink_index)
             {
-                led_states[i].start_blink(device, 100);
+                led_states[i].start_blink(device, core::backlight::BlinkType::BINARY, 100);
                 blink_index = -1;
             }
             else if (i == fade_index)
@@ -75,30 +75,30 @@ TEST_CASE("Test backlight", "[Backlight]")
         device.current_millis = 0;
         backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
         REQUIRE(device.leds_updated);
-        CHECK(device.led_colors_r[0] == 255);
-        CHECK(device.led_colors_g[0] == 127);
-        CHECK(device.led_colors_b[0] == 255);
+        CHECK(device.led_colors_r[0] == 0);
+        CHECK(device.led_colors_g[0] == 0);
+        CHECK(device.led_colors_b[0] == 0);
 
-        device.current_millis = 99;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
-        REQUIRE(device.leds_updated);
-        CHECK(device.led_colors_r[0] == 255);
-        CHECK(device.led_colors_g[0] == 127);
-        CHECK(device.led_colors_b[0] == 255);
-
-        device.current_millis = 150;
+        device.current_millis = 49;
         backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 0);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 0);
 
-        device.current_millis = 251;
+        device.current_millis = 75;
         backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 255);
         CHECK(device.led_colors_g[0] == 127);
         CHECK(device.led_colors_b[0] == 255);
+
+        device.current_millis = 101;
+        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        REQUIRE(device.leds_updated);
+        CHECK(device.led_colors_r[0] == 0);
+        CHECK(device.led_colors_g[0] == 0);
+        CHECK(device.led_colors_b[0] == 0);
     }
 
     SECTION("Test fade")

@@ -89,6 +89,11 @@ public:
      */
     virtual bool sd_write(const char* filename, const char* buffer, const uint32_t num_bytes) = 0;
 
+    /**
+     * Clears the input buffer
+     */
+    virtual void serial_clear() = 0;
+
     virtual uint16_t get_keyboard_leds() = 0;
 
     virtual void serial_begin(const uint32_t baud) = 0;
@@ -153,4 +158,6 @@ public:
             set_keyboard_key6(code);
         }
     }
+
+    virtual void reboot() = 0;
 };

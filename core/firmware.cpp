@@ -2,7 +2,10 @@
 #include "../common/constants.h"
 #include "backlight/schemes/wave.h"
 #include "keyboard/communication.h"
+#include "keyboard/controlstate.h"
 #include "keyboard/keymap_loader.h"
+#include "util/buffer_utils.h"
+#include <cstdint>
 
 namespace core
 {
@@ -24,11 +27,7 @@ void Firmware::update()
     if (!loaded_keymap)
     {
         const bool success = keyboard::KeyMapLoader::load_from_sd_else_default(device, keymap, settings);
-        if (success)
-        {
-            backlight.signal_success();
-        }
-        else
+        if (!success)
         {
             backlight.signal_failure();
         }
@@ -40,40 +39,66 @@ void Firmware::update()
         backlight.highlight_keys_on_layer = settings.highlight_layer_keys;
     }
     device.start_timer();
+    keyboard::ControlState control;
     key_scanner.scan(keyboard_scan_result);
-    keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue, mouse_state);
-    keyboard::communication::send_key_report(key_queue, device);
-    keyboard::communication::send_mouse_commands(mouse_state, device);
+    keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue, mouse_state, control, configure_mode);
+
+    if (!configure_mode)
+    {
+        keyboard::communication::send_key_report(key_queue, device);
+        keyboard::communication::send_mouse_commands(mouse_state, device);
+    }
     backlight.update(keyboard_scan_result, keymap);
 
     const uint32_t elapsed = device.get_timer_micros();
+
+    if (control.toggle_config_mode)
+    {
+        configure_mode = !configure_mode;
+        backlight.set_configure_mode(configure_mode, keymap);
+    }
+
     if (elapsed < CYCLE_TIME_MICROS)
     {
         device.sleep_micros(CYCLE_TIME_MICROS - elapsed);
     }
 
     // stty 9600 -F /dev/ttyACM0
-    if (device.serial_data_available())
+    if (configure_mode)
     {
-        char* ascii_buffer;
-        uint32_t num_read_bytes;
-        device.serial_read(ascii_buffer, num_read_bytes);
-
-        const bool success = device.sd_write(
-            common::constants::KEYMAP_FILENAME,
-            ascii_buffer,
-            num_read_bytes);
-
-        delete[] ascii_buffer;
-        if (success)
+        if (!last_configure_mode)
         {
-            backlight.signal_success();
+            // this is to prevent immediate reprogramming of the keyboard if there happens to be data in the serial buffer already.
+            device.serial_clear();
         }
-        else
+        if (device.serial_data_available())
         {
-            backlight.signal_failure();
+            char* ascii_buffer;
+            uint32_t num_read_ascii_chars;
+            device.serial_read(ascii_buffer, num_read_ascii_chars);
+
+            char* buffer;
+            int num_read_bytes;
+            core::util::ascii_buffer_to_hex_buffer(
+                ascii_buffer, buffer, num_read_ascii_chars, num_read_bytes);
+            bool keymapOk = keyboard::KeyMapLoader::verify_keymap(reinterpret_cast<const uint16_t*>(buffer), num_read_bytes / 2);
+            if (keymapOk)
+            {
+                device.sd_write(
+                    common::constants::KEYMAP_FILENAME,
+                    ascii_buffer,
+                    num_read_ascii_chars);
+                device.reboot();
+            }
+            else
+            {
+                backlight.signal_failure();
+            }
+            delete[] ascii_buffer;
+            delete[] buffer;
         }
     }
+    last_configure_mode = configure_mode;
 }
 
 }

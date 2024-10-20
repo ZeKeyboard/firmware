@@ -31,6 +31,8 @@ struct Action
     bool is_single_key() const;
 
     bool is_mouse_action() const;
+
+    bool is_control_action() const;
 };
 
 }

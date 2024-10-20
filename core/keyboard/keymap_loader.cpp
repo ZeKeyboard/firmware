@@ -218,14 +218,19 @@ bool KeyMapLoader::check_settings_checksum(const uint16_t* data, int size)
 }
 
 
+bool KeyMapLoader::verify_keymap(const uint16_t *data, int size)
+{
+    const auto properties = find_keymap_settings_split(data, size);
+    return check_checksum(data, properties.keymap_size)
+        && check_sequence_lengths(data, properties.keymap_size)
+        && check_settings_checksum(properties.settings_start, properties.settings_size);
+}
+
+
 bool KeyMapLoader::deserialize_keymap(const uint16_t* data, int size, KeyMap& keymap)
 {
-    if (!check_checksum(data, size))
-    {
-        return false;
-    }
-
-    if (!check_sequence_lengths(data, size))
+    if (!check_checksum(data, size)
+        || !check_sequence_lengths(data, size))
     {
         return false;
     }

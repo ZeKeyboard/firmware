@@ -41,6 +41,9 @@ private:
     };
 
     backlight::Backlight backlight;
+
+    bool configure_mode = false;
+    bool last_configure_mode = false;
 };
 
 }

@@ -187,6 +187,14 @@ void TeensyDevice::serial_read(char*& buffer, uint32_t& num_read_bytes)
     Serial.readBytes(buffer, num_read_bytes);
 }
 
+void TeensyDevice::serial_clear()
+{
+    while (Serial.available() > 0)
+    {
+        Serial.read();
+    }
+}
+
 bool TeensyDevice::sd_init()
 {
     return SD.begin(BUILTIN_SDCARD);
@@ -279,5 +287,10 @@ void TeensyDevice::mouse_press(DeviceMouseButton button)
 void TeensyDevice::mouse_release(DeviceMouseButton button)
 {
     Mouse.release(static_cast<uint8_t>(button));
+}
+
+void TeensyDevice::reboot()
+{
+    SCB_AIRCR = 0x05FA0004;
 }
 
