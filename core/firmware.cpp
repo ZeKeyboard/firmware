@@ -16,8 +16,9 @@ Firmware::Firmware(Device& device) :
     device{device},
     key_scanner{device},
 
-    wave{device},
+    config_button{device},
 
+    wave{device},
     backlight{device, schemes, 1}
 { }
 
@@ -43,16 +44,15 @@ void Firmware::update()
     key_scanner.scan(keyboard_scan_result);
     keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue, mouse_state, control, configure_mode);
 
-    if (!configure_mode)
-    {
-        keyboard::communication::send_key_report(key_queue, device);
-        keyboard::communication::send_mouse_commands(mouse_state, device);
-    }
+    keyboard::communication::send_key_report(key_queue, device);
+    keyboard::communication::send_mouse_commands(mouse_state, device);
+
+    config_button.update();
     backlight.update(keyboard_scan_result, keymap);
 
     const uint32_t elapsed = device.get_timer_micros();
 
-    if (control.toggle_config_mode)
+    if (control.toggle_config_mode || config_button.state())
     {
         configure_mode = !configure_mode;
         backlight.set_configure_mode(configure_mode, keymap);

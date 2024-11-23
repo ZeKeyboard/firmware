@@ -3,6 +3,7 @@
 #include "../device.h"
 #include "backlight/backlight.h"
 #include "backlight/schemes/wave.h"
+#include "keyboard/hardware_config_button.h"
 #include "keyboard/keymap.h"
 #include "keyboard/keyscan.h"
 #include "keyboard/settings.h"
@@ -28,6 +29,7 @@ private:
     keyboard::KeyboardScanResult keyboard_scan_result;
     keyboard::MouseState mouse_state;
     keyboard::Settings settings;
+    keyboard::HardwareConfigButton config_button;
 
     bool loaded_keymap = false;
 
