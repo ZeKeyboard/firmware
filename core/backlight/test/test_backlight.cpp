@@ -53,7 +53,7 @@ TEST_CASE("Test backlight", "[Backlight]")
             scheme.colors[i] = core::backlight::Color{c, 1.0f - c, c};
 
         }
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
         {
             REQUIRE(device.leds_updated);
@@ -73,28 +73,28 @@ TEST_CASE("Test backlight", "[Backlight]")
         scheme.blink_index = 0;
 
         device.current_millis = 0;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 0);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 0);
 
         device.current_millis = 49;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 0);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 0);
 
         device.current_millis = 75;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 255);
         CHECK(device.led_colors_g[0] == 127);
         CHECK(device.led_colors_b[0] == 255);
 
         device.current_millis = 101;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 0);
         CHECK(device.led_colors_g[0] == 0);
@@ -110,21 +110,21 @@ TEST_CASE("Test backlight", "[Backlight]")
         scheme.fade_index = 0;
 
         device.current_millis = 0;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 0);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 255);
 
         device.current_millis = 50;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 127);
         CHECK(device.led_colors_g[0] == 0);
         CHECK(device.led_colors_b[0] == 127);
 
         device.current_millis = 100;
-        backlight.update(core::keyboard::KeyboardScanResult{}, core::keyboard::KeyMap{});
+        backlight.update({}, {}, {});
         REQUIRE(device.leds_updated);
         CHECK(device.led_colors_r[0] == 255);
         CHECK(device.led_colors_g[0] == 0);

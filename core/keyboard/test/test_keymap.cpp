@@ -333,7 +333,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         core::keyboard::ControlState control_state;
         scan_result.num_pressed = 0;
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
 
         REQUIRE(queue.size() == 0);
     }
@@ -348,7 +348,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.pressed[0] = &descriptions[0];
 
         keymap.current_layer = 1;
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
 
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
@@ -367,7 +367,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[0];
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
 
         REQUIRE(queue.size() == 0);
     }
@@ -462,7 +462,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
             scan_result.pressed[i] = &descriptions[i];
         }
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
 
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 6);
@@ -487,7 +487,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_just_pressed = 1;
         scan_result.just_pressed[0] = &descriptions[1];
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
 
         // TODO: This test is currently failing due to the addition of blank keys in sequences.
         // We should not always add blank keys due to memory constraints, rather only when we
@@ -592,7 +592,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.pressed[0] = &descriptions[0];  // hold layer 1
         scan_result.pressed[1] = &descriptions[3];  // key on layer 1
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
 
@@ -604,7 +604,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.pressed[0] = &descriptions[0];  // hold layer 1
         scan_result.pressed[1] = &descriptions[5];  // key which does not have anything on layer 1
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
         REQUIRE(queue.size() == 0);  // nothing should be registered since we have fallback turned off
 
         queue.pop();
@@ -613,7 +613,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[3];
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (8 | 0xF000));
@@ -626,7 +626,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.just_pressed[0] = &descriptions[2];  // toggle layer 2
         scan_result.pressed[0] = &descriptions[3];  // key on layer 2
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (7 | 0xF000));
@@ -639,7 +639,7 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_just_pressed = 0;
         scan_result.pressed[0] = &descriptions[3];  // key on layer 2
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (7 | 0xF000));
@@ -652,14 +652,14 @@ TEST_CASE("Test translate scan result", "[!shouldfail][KeyMap]")
         scan_result.num_pressed = 0;
         scan_result.just_pressed[0] = &descriptions[2];  // toggle layer 2
 
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
         REQUIRE(queue.size() == 0);
 
         // layer 2 should no longer be active
         scan_result.num_just_pressed = 0;
         scan_result.num_pressed = 1;
         scan_result.pressed[0] = &descriptions[3];  // key on layer 2 but also layer 0
-        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state, false);
+        keymap.translate_keyboard_scan_result(scan_result, queue, mouse_state, control_state);
         REQUIRE(queue.size() == 1);
         REQUIRE(queue.front().num_keys == 1);
         CHECK(queue.front().keys[0] == (8 | 0xF000));
