@@ -177,8 +177,7 @@ void KeyMap::translate_keyboard_scan_result(
         const KeyboardScanResult& scan_result,
         KeyQueue& key_queue,
         MouseState& mouse,
-        ControlState& control,
-        bool configuration_mode)
+        ControlState& control)
 {
     /*
      * This function implements the following logic:
@@ -192,10 +191,6 @@ void KeyMap::translate_keyboard_scan_result(
      */
 
     read_control_keys(scan_result, control);
-    if (configuration_mode)
-    {
-        return;
-    }
 
     read_mouse_keys(scan_result, mouse);
 

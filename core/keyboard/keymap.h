@@ -32,8 +32,7 @@ public:
         const KeyboardScanResult& scan_result,
         KeyQueue& key_queue,
         MouseState& mouse,
-        ControlState& control,
-        bool configuration_mode);
+        ControlState& control);
 
     /**
      * Returns the action at the given layer, row, and column.

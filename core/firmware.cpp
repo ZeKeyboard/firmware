@@ -42,7 +42,7 @@ void Firmware::update()
     device.start_timer();
     keyboard::ControlState control;
     key_scanner.scan(keyboard_scan_result);
-    keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue, mouse_state, control, configure_mode);
+    keymap.translate_keyboard_scan_result(keyboard_scan_result, key_queue, mouse_state, control);
 
     keyboard::communication::send_key_report(key_queue, device);
     keyboard::communication::send_mouse_commands(mouse_state, device);
