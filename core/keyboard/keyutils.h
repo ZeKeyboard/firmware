@@ -209,4 +209,19 @@ inline bool key_is_valid_non_modifier_and_non_media(uint16_t key)
         key_is_control_key(key);
 }
 
+inline bool get_numlock_state(uint16_t led_state)
+{
+    return (led_state & 0x0001) > 0;
+}
+
+inline bool get_capslock_state(uint16_t led_state)
+{
+    return (led_state & 0x0002) > 0;
+}
+
+inline bool get_scrolllock_state(uint16_t led_state)
+{
+    return (led_state & 0x0004) > 0;
+}
+
 }

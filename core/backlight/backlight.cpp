@@ -2,6 +2,7 @@
 #include "color.h"
 #include "../keyboard/keyutils.h"
 #include "ledstate.h"
+#include <cstdint>
 
 
 namespace core::backlight
@@ -32,7 +33,8 @@ void Backlight::reset_all_states()
 }
 
 void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
-                       const core::keyboard::KeyMap& keymap)
+                       const core::keyboard::KeyMap& keymap,
+                       uint16_t led_state)
 {
     if (highlight_keys_on_layer && keymap.current_layer != 0)
     {
@@ -54,13 +56,54 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
             scheme->update(scan_result, led_states);
         }
     }
+
+    // view keyboard led state
+    if (core::keyboard::util::get_numlock_state(led_state))
+    {
+        highlight_key(0xF053, keymap);
+    }
+    if (core::keyboard::util::get_capslock_state(led_state))
+    {
+        highlight_key(0xF039, keymap);
+    }
+    if (core::keyboard::util::get_scrolllock_state(led_state))
+    {
+        highlight_key(0xF047, keymap);
+    }
+
+    // set the RGB led strip
     for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
     {
         LEDState& state = led_states[i];
         auto c = state.update(device);
         device.set_led(i, c.get_r_byte(), c.get_g_byte(), c.get_b_byte());
     }
+
     device.update_leds();
+}
+
+
+void Backlight::highlight_key(uint16_t keycode, const core::keyboard::KeyMap& keymap)
+{
+    for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+    {
+        LEDState& state = led_states[i];
+        const auto& led = state.description;
+        if (led->key == nullptr)
+        {
+            continue;
+        }
+        // just look on layer 1
+        const auto action = keymap.get_action(0, led->key->row, led->key->col);
+        if (action != nullptr)
+        {
+            const auto code = action->sequence[0].key;
+            if (code == keycode)
+            {
+                state.color = colors::WHITE;
+            }
+        }
+    }
 }
 
 

@@ -48,7 +48,7 @@ void Firmware::update()
     keyboard::communication::send_mouse_commands(mouse_state, device);
 
     config_button.update();
-    backlight.update(keyboard_scan_result, keymap);
+    backlight.update(keyboard_scan_result, keymap, device.get_keyboard_leds());
 
     const uint32_t elapsed = device.get_timer_micros();
 
