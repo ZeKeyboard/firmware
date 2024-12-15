@@ -2,6 +2,7 @@
 
 #include "../device.h"
 #include "backlight/backlight.h"
+#include "backlight/schemes/gameoflife.h"
 #include "backlight/schemes/wave.h"
 #include "keyboard/hardware_config_button.h"
 #include "keyboard/keymap.h"
@@ -35,11 +36,13 @@ private:
 
     // Backlight schemes
     backlight::schemes::Wave wave;
+    backlight::schemes::GameOfLife gameOfLife;
 
-    static constexpr int NUM_SCHEMES = 1;
+    static constexpr int NUM_SCHEMES = 2;
     backlight::schemes::Scheme* schemes[NUM_SCHEMES] =
     {
-        &wave
+        &wave,
+        &gameOfLife
     };
 
     backlight::Backlight backlight;

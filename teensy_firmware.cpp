@@ -23,7 +23,7 @@ void setup()
     FastLED.addLeds(pcontroller, leds, common::constants::TOTAL_NUM_LEDS);
 
     FastLED.clear();
-    FastLED.setMaxPowerInVoltsAndMilliamps(5, 900);
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 800);
     delay(50);
     FastLED.show();
     device.serial_begin(9600);

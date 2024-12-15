@@ -1,5 +1,6 @@
 #include "firmware.h"
 #include "../common/constants.h"
+#include "backlight/schemes/gameoflife.h"
 #include "backlight/schemes/wave.h"
 #include "keyboard/communication.h"
 #include "keyboard/controlstate.h"
@@ -19,7 +20,8 @@ Firmware::Firmware(Device& device) :
     config_button{device},
 
     wave{device},
-    backlight{device, schemes, 1}
+    gameOfLife{device},
+    backlight{device, schemes, NUM_SCHEMES}
 { }
 
 void Firmware::update()
@@ -56,6 +58,11 @@ void Firmware::update()
     {
         configure_mode = !configure_mode;
         backlight.set_configure_mode(configure_mode, keymap);
+    }
+
+    if (control.next_backlight_mode)
+    {
+        backlight.increment_scheme();
     }
 
     if (elapsed < CYCLE_TIME_MICROS)

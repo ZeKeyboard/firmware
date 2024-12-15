@@ -22,6 +22,13 @@ void Backlight::increment_scheme()
 {
     current_scheme_index = (current_scheme_index + 1) % num_schemes;
     schemes[current_scheme_index]->reset();
+
+    // reset the RGB led strip
+    for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
+    {
+        LEDState& state = led_states[i];
+        state.reset();
+    }
 }
 
 void Backlight::reset_all_states()

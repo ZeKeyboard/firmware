@@ -9,17 +9,11 @@
 namespace core::backlight::schemes
 {
 
-const float SPEED = 0.005f;
-const float X_SPEED = 0.8f;
-const float Y_SPEED = 1.1f;
-const float MAX_PHASE_DIFFERENCE = 0.3f;
-const uint32_t PRESS_FADE_TIME = 2000;
-
-
-class Wave : public Scheme
+class GameOfLife : public Scheme
 {
 public:
-    Wave(Device& device) : Scheme{device} { }
+
+    GameOfLife(Device& device);
 
     void reset() override;
 
@@ -27,6 +21,19 @@ public:
         core::backlight::LEDState led_states[common::constants::TOTAL_NUM_LEDS]) override;
 private:
     uint64_t it = 0;
+
+    uint8_t grid[common::constants::NUM_ROWS][common::constants::NUM_COLS];
+
+    uint8_t count_alive_neighbors(int8_t row, int8_t col) const;
+
+    void run_one_evolution();
+
+    bool was_alive(int8_t row, int8_t col) const;
+    bool is_alive(int8_t row, int8_t col) const;
+
+    void set_alive(int8_t row, int8_t col);
+    void save_previous();
+
 };
 
 }
