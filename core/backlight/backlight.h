@@ -24,6 +24,9 @@ public:
     void signal_failure();
     void signal_success();
 
+    void increase_brightness();
+    void decrease_brightness();
+
     bool highlight_keys_on_layer = false;
 
     void set_configure_mode(bool configure_mode, const core::keyboard::KeyMap& keymap);
@@ -47,6 +50,8 @@ private:
     int current_scheme_index = 0;
 
     int highlighted_layer = 0;
+
+    int brightness = 127;
 
     const int num_schemes;
     schemes::Scheme** schemes;

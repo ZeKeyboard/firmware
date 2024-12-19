@@ -41,6 +41,12 @@ uint16_t TeensyDevice::get_keyboard_leds()
     return keyboard_leds;
 }
 
+
+void TeensyDevice::set_backlight_brightness(uint8_t brightness)
+{
+    FastLED.setBrightness(brightness);
+}
+
 void TeensyDevice::serial_begin(const uint32_t baud)
 {
     Serial.begin(baud);

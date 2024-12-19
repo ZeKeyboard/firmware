@@ -206,9 +206,9 @@ uint32_t SimulatorDevice::get_timer_micros()
 void SimulatorDevice::set_led(uint16_t index, uint8_t r, uint8_t g, uint8_t b)
 {
     std::lock_guard<std::mutex> lock(mutex);
-    led_colors_r[index] = r;
-    led_colors_g[index] = g;
-    led_colors_b[index] = b;
+    led_colors_r[index] = static_cast<uint8_t>(r * (static_cast<float>(brightness)/255.));
+    led_colors_g[index] = static_cast<uint8_t>(g * (static_cast<float>(brightness)/255.));
+    led_colors_b[index] = static_cast<uint8_t>(b * (static_cast<float>(brightness)/255.));
 }
 
 void SimulatorDevice::update_leds()

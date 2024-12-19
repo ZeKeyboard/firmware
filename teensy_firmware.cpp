@@ -19,7 +19,7 @@ void setup()
     device.sd_init();
     octo.begin();
     pcontroller = new CTeensy4Controller<GRB, WS2811_800kHz>(&octo);
-    FastLED.setBrightness(255);
+    FastLED.setBrightness(127);
     FastLED.addLeds(pcontroller, leds, common::constants::TOTAL_NUM_LEDS);
 
     FastLED.clear();

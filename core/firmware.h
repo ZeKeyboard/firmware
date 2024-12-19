@@ -4,6 +4,7 @@
 #include "backlight/backlight.h"
 #include "backlight/schemes/gameoflife.h"
 #include "backlight/schemes/wave.h"
+#include "keyboard/controlstate.h"
 #include "keyboard/hardware_config_button.h"
 #include "keyboard/keymap.h"
 #include "keyboard/keyscan.h"
@@ -49,6 +50,8 @@ private:
 
     bool configure_mode = false;
     bool last_configure_mode = false;
+
+    void process_control_inputs(keyboard::ControlState& control);
 };
 
 }

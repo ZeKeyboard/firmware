@@ -35,6 +35,7 @@ public:
     virtual bool sd_read(const char* filename, char*& buffer, uint32_t& num_read_bytes) const override;
     virtual bool sd_write(const char* filename, const char* buffer, const uint32_t num_bytes) override;
     virtual uint16_t get_keyboard_leds() override;
+    virtual void set_backlight_brightness(uint8_t brightness) override;
 
     virtual void serial_begin(const uint32_t baud) override;
     virtual void serial_print(const char* str) override;

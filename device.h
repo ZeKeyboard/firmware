@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <stdint.h>
 
 
@@ -121,6 +122,8 @@ public:
     virtual void mouse_move(int8_t dx, int8_t dy, int8_t wheel) = 0;
     virtual void mouse_press(DeviceMouseButton button) = 0;
     virtual void mouse_release(DeviceMouseButton button) = 0;
+
+    virtual void set_backlight_brightness(uint8_t brightness) = 0;
 
     /**
      * Milliseconds since the device was started.

@@ -44,6 +44,10 @@ public:
         return leds;
     }
 
+    virtual void set_backlight_brightness(uint8_t brightness) override
+    {
+        this->brightness = brightness;
+    }
     virtual void serial_begin(const uint32_t) override { }
     virtual void serial_print(const char*) override { }
 
@@ -88,6 +92,8 @@ public:
     uint8_t led_colors_r[common::constants::TOTAL_NUM_LEDS];
     uint8_t led_colors_g[common::constants::TOTAL_NUM_LEDS];
     uint8_t led_colors_b[common::constants::TOTAL_NUM_LEDS];
+
+    uint8_t brightness = 255;
 
 private:
     bool data_available = false;

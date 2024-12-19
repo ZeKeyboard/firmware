@@ -2,11 +2,14 @@
 #include "color.h"
 #include "../keyboard/keyutils.h"
 #include "ledstate.h"
+#include <algorithm>
 #include <cstdint>
 
 
 namespace core::backlight
 {
+
+constexpr int BRIGHTNESS_STEP = 32;
 
 Backlight::Backlight(Device& device, schemes::Scheme** schemes, int num_schemes)
     : device{device}, num_schemes{num_schemes}, schemes{schemes}
@@ -283,6 +286,18 @@ void Backlight::set_configure_mode(bool configure_mode, const core::keyboard::Ke
             }
         }
     }
+}
+
+void Backlight::increase_brightness()
+{
+    brightness = std::min(127, brightness + BRIGHTNESS_STEP);
+    device.set_backlight_brightness(static_cast<uint8_t>(brightness));
+}
+
+void Backlight::decrease_brightness()
+{
+    brightness = std::max(0, brightness - BRIGHTNESS_STEP);
+    device.set_backlight_brightness(static_cast<uint8_t>(brightness));
 }
 
 }

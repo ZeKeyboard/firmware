@@ -37,6 +37,7 @@ public:
     virtual bool sd_write(const char*, const char*, const uint32_t) override { return false; }
 
     virtual uint16_t get_keyboard_leds() override { return 0; }
+    virtual void set_backlight_brightness(uint8_t brightness) override { }
 
     virtual void serial_begin(const uint32_t) override { }
     virtual void serial_print(const char*) override { }

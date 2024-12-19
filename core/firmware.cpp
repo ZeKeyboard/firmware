@@ -54,16 +54,7 @@ void Firmware::update()
 
     const uint32_t elapsed = device.get_timer_micros();
 
-    if (control.toggle_config_mode || config_button.state())
-    {
-        configure_mode = !configure_mode;
-        backlight.set_configure_mode(configure_mode, keymap);
-    }
-
-    if (control.next_backlight_mode)
-    {
-        backlight.increment_scheme();
-    }
+    process_control_inputs(control);
 
     if (elapsed < CYCLE_TIME_MICROS)
     {
@@ -106,6 +97,27 @@ void Firmware::update()
         }
     }
     last_configure_mode = configure_mode;
+}
+
+void Firmware::process_control_inputs(keyboard::ControlState& control)
+{
+    if (control.toggle_config_mode || config_button.state())
+    {
+        configure_mode = !configure_mode;
+        backlight.set_configure_mode(configure_mode, keymap);
+    }
+    if (control.next_backlight_mode)
+    {
+        backlight.increment_scheme();
+    }
+    if (control.increase_brightness)
+    {
+        backlight.increase_brightness();
+    }
+    if (control.decrease_brightness)
+    {
+        backlight.decrease_brightness();
+    }
 }
 
 }
