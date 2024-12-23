@@ -32,4 +32,6 @@ const uint32_t DEFAULT_FADE_TIME = 1000;
 
 static const char* KEYMAP_FILENAME = "Configuration.zkb";
 
+constexpr int LOGO_LED_INDEX = 0;
+
 }

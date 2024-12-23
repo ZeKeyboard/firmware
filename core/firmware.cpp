@@ -20,7 +20,8 @@ Firmware::Firmware(Device& device) :
     config_button{device},
 
     wave{device},
-    gameOfLife{device},
+    game_of_life{device},
+    lights{device},
     backlight{device, schemes, NUM_SCHEMES}
 { }
 

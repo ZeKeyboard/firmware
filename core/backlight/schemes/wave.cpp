@@ -5,6 +5,12 @@
 namespace core::backlight::schemes
 {
 
+const float SPEED = 0.005f;
+const float X_SPEED = 0.8f;
+const float Y_SPEED = 1.1f;
+const float MAX_PHASE_DIFFERENCE = 0.3f;
+const uint32_t PRESS_FADE_TIME = 2000;
+
 void Wave::reset()
 {
     it = 0;
@@ -29,7 +35,7 @@ void Wave::update(const core::keyboard::KeyboardScanResult& scan_result,
 
     for (int i = 0; i < scan_result.num_pressed; ++i)
     {
-        const common::LEDDescription pressed = scan_result.just_pressed[i]->get_associated_led();
+        const common::LEDDescription pressed = scan_result.pressed[i]->get_associated_led();
         const auto index = pressed.strip_index;
         auto& state = led_states[index];
         state.start_fade(device, colors::WHITE, PRESS_FADE_TIME);
