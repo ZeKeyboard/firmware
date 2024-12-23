@@ -67,18 +67,23 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
         }
     }
 
+    int led_indices_to_highlight[3] = {-1, -1, -1};
+    int num_leds_to_highlight = 0;
     // view keyboard led state
     if (core::keyboard::util::get_numlock_state(led_state))
     {
-        highlight_key(0xF053, keymap);
+        led_indices_to_highlight[num_leds_to_highlight] = find_led_index_of_keycode(0xF053, keymap);
+        num_leds_to_highlight++;
     }
     if (core::keyboard::util::get_capslock_state(led_state))
     {
-        highlight_key(0xF039, keymap);
+        led_indices_to_highlight[num_leds_to_highlight] = find_led_index_of_keycode(0xF039, keymap);
+        num_leds_to_highlight++;
     }
     if (core::keyboard::util::get_scrolllock_state(led_state))
     {
-        highlight_key(0xF047, keymap);
+        led_indices_to_highlight[num_leds_to_highlight] = find_led_index_of_keycode(0xF047, keymap);
+        num_leds_to_highlight++;
     }
 
     // set the RGB led strip
@@ -86,14 +91,31 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
     {
         LEDState& state = led_states[i];
         auto c = state.update(device);
-        device.set_led(i, c.get_r_byte(), c.get_g_byte(), c.get_b_byte());
+        bool led_override = false;
+        for (int j = 0; j < num_leds_to_highlight; ++j)
+        {
+            if (led_indices_to_highlight[j] == i)
+            {
+                led_override = true;
+                break;
+            }
+        }
+        if (led_override)
+        {
+
+            device.set_led(i, 255, 255, 255);
+        }
+        else
+        {
+            device.set_led(i, c.get_r_byte(), c.get_g_byte(), c.get_b_byte());
+        }
     }
 
     device.update_leds();
 }
 
 
-void Backlight::highlight_key(uint16_t keycode, const core::keyboard::KeyMap& keymap)
+int Backlight::find_led_index_of_keycode(uint16_t keycode, const core::keyboard::KeyMap& keymap)
 {
     for (uint8_t i = 0; i < common::constants::TOTAL_NUM_LEDS; ++i)
     {
@@ -110,10 +132,11 @@ void Backlight::highlight_key(uint16_t keycode, const core::keyboard::KeyMap& ke
             const auto code = action->sequence[0].key;
             if (code == keycode)
             {
-                state.color = colors::WHITE;
+                return i;
             }
         }
     }
+    return -1;
 }
 
 

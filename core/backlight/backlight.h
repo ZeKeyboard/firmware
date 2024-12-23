@@ -39,7 +39,7 @@ private:
 
     void reset_all_states();
 
-    void highlight_key(uint16_t keycode, const core::keyboard::KeyMap& keymap);
+    int find_led_index_of_keycode(uint16_t keycode, const core::keyboard::KeyMap& keymap);
 
     void highlight_layer_keys(const core::keyboard::KeyMap& keymap);
 
