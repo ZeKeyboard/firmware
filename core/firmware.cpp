@@ -41,6 +41,7 @@ void Firmware::update()
         mouse_state.mouse_acceleration = settings.mouse_acceleration;
 
         backlight.highlight_keys_on_layer = settings.highlight_layer_keys;
+        backlight.set_current_scheme_index(settings.default_backlight_scheme);
     }
     device.start_timer();
     keyboard::ControlState control;

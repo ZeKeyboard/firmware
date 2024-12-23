@@ -19,7 +19,7 @@ void Lights::update(const core::keyboard::KeyboardScanResult& scan_result,
     core::backlight::LEDState led_states[common::constants::TOTAL_NUM_LEDS])
 {
     const float logo_hue = (cos(static_cast<float>(it) * LOGO_SPEED) + 1.0f) / 2.0f;
-    const Color logo_color = Color::from_hsv(logo_hue, 1.0f, 0.7f);
+    const Color logo_color = Color::from_hsv(logo_hue, 1.0f, 1.0f);
     led_states[common::constants::LOGO_LED_INDEX].color = logo_color;
     for (int i = 0; i < scan_result.num_just_pressed; ++i)
     {

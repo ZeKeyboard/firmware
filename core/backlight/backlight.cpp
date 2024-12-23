@@ -300,4 +300,10 @@ void Backlight::decrease_brightness()
     device.set_backlight_brightness(static_cast<uint8_t>(brightness));
 }
 
+void Backlight::set_current_scheme_index(int index)
+{
+    current_scheme_index = std::min(num_schemes - 1, index);
+    schemes[current_scheme_index]->reset();
+}
+
 }

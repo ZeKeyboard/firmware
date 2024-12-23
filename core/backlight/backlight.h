@@ -27,6 +27,8 @@ public:
     void increase_brightness();
     void decrease_brightness();
 
+    void set_current_scheme_index(int index);
+
     bool highlight_keys_on_layer = false;
 
     void set_configure_mode(bool configure_mode, const core::keyboard::KeyMap& keymap);

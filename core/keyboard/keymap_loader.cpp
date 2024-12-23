@@ -13,6 +13,7 @@ const uint64_t SETTINGS_START_WORD = 0xDEADBEEFDEADBEEF;
 const uint16_t MOUSE_SPEED_NUMBER = 0;
 const uint16_t MOUSE_ACCELERATION_NUMBER = 1;
 const uint16_t HIGHLIGHT_LAYER_KEYS_NUMBER = 2;
+const uint16_t DEFAULT_SCHEME_NUMBER = 3;
 
 
 struct DataProperties
@@ -196,6 +197,10 @@ bool KeyMapLoader::deserialize_settings(const uint16_t* data, int size, Settings
         else if (setting_number == HIGHLIGHT_LAYER_KEYS_NUMBER)
         {
             settings.highlight_layer_keys = setting_value;
+        }
+        else if (setting_number == DEFAULT_SCHEME_NUMBER)
+        {
+            settings.default_backlight_scheme = setting_value;
         }
     }
 
