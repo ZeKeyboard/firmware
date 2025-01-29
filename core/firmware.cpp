@@ -22,6 +22,7 @@ Firmware::Firmware(Device& device) :
     wave{device},
     game_of_life{device},
     lights{device},
+    water{device},
     backlight{device, schemes, NUM_SCHEMES}
 { }
 

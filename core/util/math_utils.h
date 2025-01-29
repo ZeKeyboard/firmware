@@ -33,4 +33,12 @@ T wrap_around(T value, T min, T max)
     return result;
 }
 
+constexpr int32_t ceil(float num)
+{
+    // https://stackoverflow.com/a/31962570
+    return (static_cast<float>(static_cast<int32_t>(num)) == num)
+        ? static_cast<int32_t>(num)
+        : static_cast<int32_t>(num) + ((num > 0) ? 1 : 0);
+}
+
 }

@@ -60,7 +60,7 @@ SDFAT_HEADERS = $(wildcard $(TEENSY_LIBS)/SdFat/src/*.h) $(wildcard $(TEENSY_LIB
 
 CORE_HEADERS = $(wildcard $(TEENSY4_CORE)/*.h)
 LIB_HEADERS = $(FASTLED_HEADERS) $(SPI_HEADERS) $(OCTOWS2811_HEADERS) $(SD_HEADERS) $(SDFAT_HEADERS)
-NON_HARDWARE_HEADERS = $(wildcard core/*.h) $(wildcard core/**/*.h) $(wildcard common/*.h) $(wildcard common/**/*.h) $(wildcard generated/*.h)
+NON_HARDWARE_HEADERS = $(wildcard core/*.h) $(wildcard core/**/*.h) $(wildcard core/**/**/*.h) $(wildcard common/*.h) $(wildcard common/**/*.h) $(wildcard generated/*.h)
 HEADERS = $(wildcard *.h) $(NON_HARDWARE_HEADERS)
 
 FASTLED_SOURCES = $(wildcard $(TEENSY_LIBS)/FastLED/src/*.cpp)

@@ -62,7 +62,7 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
         highlighted_layer = 0;
         if (!configure_mode)
         {
-            auto* scheme = schemes[current_scheme_index];
+            auto scheme = schemes[current_scheme_index];
             scheme->update(scan_result, led_states);
         }
     }
