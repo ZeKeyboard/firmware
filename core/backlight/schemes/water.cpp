@@ -1,7 +1,6 @@
 #include "water.h"
 #include <cmath>
 
-
 namespace core::backlight::schemes
 {
 
@@ -9,7 +8,7 @@ const float HUE_SPEED = 0.001f;
 const uint8_t NUM_CORNERS = 4;
 const float CORNER_DIST = 1.0 / sqrt(2);
 const float NEIGHBOR_DENOMINATOR = 4 + 4/sqrt(2);
-const float DAMPENING = 0.99f;
+const float DAMPENING = 0.995f;
 const uint8_t KEY_PRESS_RADIUS = 1 * WATER_RESOLUTION;
 const int16_t PRESS_FORCE = 20000;
 const float WATER_SPEED = 0.2;
@@ -63,7 +62,7 @@ void Water::write_colors(core::backlight::LEDState led_states[common::constants:
 
         const float amount = ((((float)p->pos) / 32767.0) + 1.0) / 2.0;
         const float hue = (cos(static_cast<float>(it) * HUE_SPEED) + 1.0f) / 2.0f;
-        const Color color = Color::from_hsv(hue, 1.0f, amount * amount);
+        const Color color = Color::from_hsv(hue, 1.0f, std::min(1.0f, amount * amount * amount * 1.3f));
 
         led_state->color = color;
     }
