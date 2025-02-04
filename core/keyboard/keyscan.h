@@ -24,6 +24,7 @@ struct KeyboardScanResult
     void try_add_pressed_key(const common::KeyDescription* key);
     void reset_just_pressed();
     void update();
+    bool are_any_keys_pressed() const;
 };
 
 

@@ -46,6 +46,11 @@ void KeyboardScanResult::reset_just_pressed()
     num_just_pressed = 0;
 }
 
+bool KeyboardScanResult::are_any_keys_pressed() const
+{
+    return num_just_pressed > 0;
+}
+
 KeyScanner::KeyScanner(Device& device)
     : device{device}
 {

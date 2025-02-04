@@ -37,6 +37,8 @@ private:
     Color update_fade(LEDState& state);
     Color update_blink(LEDState& state);
 
+    void screensaver_update();
+
     void reset_all_states();
 
     int find_led_index_of_keycode(uint16_t keycode, const core::keyboard::KeyMap& keymap);
@@ -49,6 +51,10 @@ private:
     Device& device;
     LEDState led_states[common::constants::TOTAL_NUM_LEDS];
 
+    util::Timer screensaver_timer;
+
+    bool screensaver_active = false;
+
     int current_scheme_index = 0;
 
     int highlighted_layer = 0;
@@ -58,6 +64,7 @@ private:
     const int num_schemes;
     schemes::Scheme** schemes;
     bool configure_mode = false;
+    uint64_t screensaver_it = 0;
 };
 
 }
