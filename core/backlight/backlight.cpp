@@ -12,8 +12,6 @@ namespace core::backlight
 
 constexpr int BRIGHTNESS_STEP = 32;
 constexpr uint32_t MILLIS_UNTIL_SCREENSAVER = 1000 * 60 * 5;
-constexpr float SCREENSAVER_HUE_SPEED = 0.001f;
-constexpr int SCREENSAVER_DIVIDER = 16;
 
 
 Backlight::Backlight(Device& device, schemes::Scheme** schemes, int num_schemes)
@@ -58,7 +56,9 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
 
     if (screensaver_active)
     {
-        screensaver_update();
+        reset_all_states();
+        screensaver.update();
+        screensaver.draw(led_states);
 
         if (scan_result.are_any_keys_pressed())
         {
@@ -113,7 +113,7 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
         screensaver_active = screensaver_timer.is_finished();
         if (screensaver_active)
         {
-            reset_all_states();
+            screensaver.init();
         }
     }
 
@@ -143,17 +143,6 @@ void Backlight::update(const core::keyboard::KeyboardScanResult& scan_result,
     }
 
     device.update_leds();
-}
-
-
-void Backlight::screensaver_update()
-{
-    reset_all_states();
-    screensaver_it++;
-    const float hue = (cos(static_cast<float>(screensaver_it) * SCREENSAVER_HUE_SPEED) + 1.0f) / 2.0f;
-    const Color color = Color::from_hsv(hue, 1.0f, 1.0f);
-    int index = static_cast<int>(std::floor(screensaver_it / SCREENSAVER_DIVIDER)) % common::constants::TOTAL_NUM_LEDS;
-    led_states[index].color = color;
 }
 
 

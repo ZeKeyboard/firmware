@@ -7,6 +7,7 @@
 #include "../util/timer.h"
 #include "schemes/scheme.h"
 #include "../keyboard/keymap.h"
+#include "screensaver.h"
 #include <cstdint>
 
 
@@ -37,8 +38,6 @@ private:
     Color update_fade(LEDState& state);
     Color update_blink(LEDState& state);
 
-    void screensaver_update();
-
     void reset_all_states();
 
     int find_led_index_of_keycode(uint16_t keycode, const core::keyboard::KeyMap& keymap);
@@ -61,10 +60,11 @@ private:
 
     int brightness = 127;
 
+    ScreenSaver screensaver;
+
     const int num_schemes;
     schemes::Scheme** schemes;
     bool configure_mode = false;
-    uint64_t screensaver_it = 0;
 };
 
 }

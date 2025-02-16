@@ -7,6 +7,32 @@
 namespace core::util
 {
 
+struct Vector2D
+{
+    float x;
+    float y;
+
+    Vector2D operator+(const Vector2D& other)
+    {
+        return {x + other.x, y + other.y};
+    }
+
+    Vector2D operator*(float scalar)
+    {
+        return {x * scalar, y * scalar};
+    }
+
+    void flip_x()
+    {
+        x = -x;
+    }
+
+    void flip_y()
+    {
+        y = -y;
+    }
+};
+
 template<typename T>
 T clamp(T value, T min, T max)
 {
